@@ -50,6 +50,25 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
+  
+  // Additional profile fields
+  bio           String?
+  location      String?
+  company       String?
+  website       String?
+  
+  // Fields for social media links
+  githubUrl     String?
+  twitterUrl    String?
+  linkedinUrl   String?
+  instagramUrl  String?
+  
+  // Fields for profile statistics
+  joinedAt      DateTime? @default(now())
+  tournaments   Int?      @default(0)
+  matches       Int?      @default(0)
+  wins          Int?      @default(0)
+  ranking       Int?      @default(0)
 }
 
 model VerificationToken {
