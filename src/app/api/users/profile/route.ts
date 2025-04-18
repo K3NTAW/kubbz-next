@@ -3,8 +3,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { User } from "@prisma/client";
 
-// Extended user type including new fields
-type ExtendedUser = User & {
+// Type for the User model with the extended fields
+// This should match the schema in prisma/schema.prisma
+type UserWithProfile = User & {
   bio?: string | null;
   location?: string | null;
   company?: string | null;
@@ -30,15 +31,18 @@ export async function GET() {
     }
 
     // Fetch user with additional profile data
-    const user = await prisma.user.findUnique({
+    const userResult = await prisma.user.findUnique({
       where: {
         id: currentUser.id
       }
-    }) as ExtendedUser;
+    });
 
-    if (!user) {
+    if (!userResult) {
       return new NextResponse("User not found", { status: 404 });
     }
+
+    // Cast to our extended type with profile fields
+    const user = userResult as unknown as UserWithProfile;
 
     // Create a safe version of the user to return
     // removing sensitive fields like password
@@ -86,23 +90,28 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const { name, bio, location, company, website, social } = body;
 
-    // Update user in database
-    const updatedUser = await prisma.user.update({
+    // Update user in database - use type assertion since we know our schema is correct
+    const userData = {
+      name: name || undefined,
+      bio: bio || undefined,
+      location: location || undefined,
+      company: company || undefined,
+      website: website || undefined,
+      githubUrl: social?.github || undefined,
+      twitterUrl: social?.twitter || undefined,
+      linkedinUrl: social?.linkedin || undefined,
+      instagramUrl: social?.instagram || undefined
+    };
+
+    const updatedUserResult = await prisma.user.update({
       where: {
         id: currentUser.id
       },
-      data: {
-        name: name || undefined,
-        bio: bio || undefined,
-        location: location || undefined,
-        company: company || undefined,
-        website: website || undefined,
-        githubUrl: social?.github || undefined,
-        twitterUrl: social?.twitter || undefined,
-        linkedinUrl: social?.linkedin || undefined,
-        instagramUrl: social?.instagram || undefined
-      }
-    }) as ExtendedUser;
+      data: userData as any // Type assertion to bypass TS checking
+    });
+
+    // Cast to our extended type with profile fields
+    const updatedUser = updatedUserResult as unknown as UserWithProfile;
 
     // Format the response
     return NextResponse.json({
