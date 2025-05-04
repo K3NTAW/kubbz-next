@@ -25,9 +25,18 @@ import {
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
+type UserWithRole = {
+  role?: string;
+  [key: string]: unknown;
+};
+
+function isUserWithRole(user: unknown): user is UserWithRole {
+  return !!user && typeof (user as UserWithRole).role === "string";
+}
+
 export default function Navbar() {
   const { data: session, status } = useSession();
-  const isAdmin = session?.user && (session.user as any).role === "admin";
+  const isAdmin = isUserWithRole(session?.user) && session?.user?.role === "admin";
   const menuItems = [
     { title: "Home", url: "/", icon: Home },
     { title: "Gallery", url: "/gallery", icon: GalleryHorizontal },

@@ -4,18 +4,27 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+type UserWithRole = {
+  role?: string;
+  [key: string]: unknown;
+};
+
+function isUserWithRole(user: unknown): user is UserWithRole {
+  return !!user && typeof (user as UserWithRole).role === "string";
+}
+
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || (session.user as any).role !== "admin") {
+    if (!session || !isUserWithRole(session.user) || session.user.role !== "admin") {
       router.replace("/");
     }
   }, [session, status, router]);
 
-  if (status === "loading" || !session || (session.user as any).role !== "admin") {
+  if (status === "loading" || !session || !isUserWithRole(session.user) || session.user.role !== "admin") {
     return null;
   }
 

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -49,14 +49,19 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.sub;
+        session.user.id = token.sub;
         // Fetch user from DB to get user_metadata
         const user = await prisma.users.findUnique({
           where: { id: token.sub },
           select: { user_metadata: true }
         });
-        if (user?.user_metadata && session.user) {
-          (session.user as any).role = user.user_metadata.role;
+        if (
+          user?.user_metadata &&
+          typeof user.user_metadata === "object" &&
+          user.user_metadata !== null &&
+          "role" in user.user_metadata
+        ) {
+          session.user.role = (user.user_metadata as { role?: string }).role;
         }
       }
       return session;
