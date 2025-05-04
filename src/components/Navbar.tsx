@@ -6,7 +6,6 @@ import { GalleryHorizontal, Home, Trophy, Shield, Menu, User, LogIn, UserPlus } 
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import {
@@ -28,11 +27,12 @@ import Link from "next/link";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const isAdmin = session?.user && (session.user as any).role === "admin";
   const menuItems = [
     { title: "Home", url: "/", icon: Home },
     { title: "Gallery", url: "/gallery", icon: GalleryHorizontal },
     { title: "Tournaments", url: "/tournament", icon: Trophy },
-    { title: "Admin", url: "/admin", icon: Shield },
+    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
   ];
 
   type ProfileItem = {
@@ -82,11 +82,12 @@ export default function Navbar() {
               <NavigationMenuList>
                 {menuItems.map((item) => (
                   <NavigationMenuItem key={item.title}>
-                    <Link href={item.url} legacyBehavior passHref>
-                      <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground">
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {item.title}
-                      </NavigationMenuLink>
+                    <Link
+                      href={item.url}
+                      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
                     </Link>
                   </NavigationMenuItem>
                 ))}

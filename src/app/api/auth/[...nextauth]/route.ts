@@ -50,6 +50,14 @@ const handler = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         (session.user as any).id = token.sub;
+        // Fetch user from DB to get user_metadata
+        const user = await prisma.users.findUnique({
+          where: { id: token.sub },
+          select: { user_metadata: true }
+        });
+        if (user?.user_metadata && session.user) {
+          (session.user as any).role = user.user_metadata.role;
+        }
       }
       return session;
     },

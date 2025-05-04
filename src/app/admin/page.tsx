@@ -1,7 +1,24 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AdminPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || (session.user as any).role !== "admin") {
+      router.replace("/");
+    }
+  }, [session, status, router]);
+
+  if (status === "loading" || !session || (session.user as any).role !== "admin") {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black p-8">
       <div className="max-w-5xl mx-auto flex flex-col gap-8">
