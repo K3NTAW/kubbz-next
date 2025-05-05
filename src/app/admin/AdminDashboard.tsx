@@ -46,6 +46,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const [form, setForm] = useState<Record<string, string>>( {} );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createModal, setCreateModal] = useState(false);
 
   // Filtered users
   const filteredUsers = useMemo(() => {
@@ -141,6 +142,43 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       closeEditModal();
     } catch {
       setError("Failed to update");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const openCreateModal = () => {
+    setForm({ name: "", date: "", description: "" });
+    setCreateModal(true);
+    setError(null);
+  };
+  const closeCreateModal = () => {
+    setCreateModal(false);
+    setForm({});
+    setError(null);
+  };
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      // TODO: Replace with actual user id from session
+      const createdBy = "admin-id";
+      const res = await fetch("/api/tournaments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          date: form.date,
+          description: form.description,
+          createdBy,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create tournament");
+      const { tournament } = await res.json();
+      setTournamentList((prev) => [tournament, ...prev]);
+      closeCreateModal();
+    } catch {
+      setError("Failed to create tournament");
     } finally {
       setLoading(false);
     }
@@ -242,31 +280,59 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
           </div>
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tournamentList.map((t) => (
-              <TableRow key={t.id}>
-                <TableCell>{t.name}</TableCell>
-                <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", t)}>
-                    Edit
-                  </Button>
-                  <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.id)} disabled={loading}>
-                    Delete
-                  </Button>
-                </TableCell>
+        <>
+          <div className="mb-4 flex justify-end">
+            <Button onClick={openCreateModal}>Create Tournament</Button>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {tournamentList.map((t) => (
+                <TableRow key={t.id}>
+                  <TableCell>{t.name}</TableCell>
+                  <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
+                  <TableCell>
+                    <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", t)}>
+                      Edit
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.id)} disabled={loading}>
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Create Tournament Modal */}
+          <Sheet open={createModal} onOpenChange={v => { if (!v) closeCreateModal(); }}>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Create Tournament</SheetTitle>
+                <SheetDescription>
+                  Fill in the details to create a new tournament.
+                </SheetDescription>
+              </SheetHeader>
+              <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 p-4">
+                <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
+                <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
+                <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
+                <SheetFooter>
+                  <Button type="submit" disabled={loading}>{loading ? "Creating..." : "Create"}</Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline" onClick={closeCreateModal}>Cancel</Button>
+                  </SheetClose>
+                </SheetFooter>
+                {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+              </form>
+            </SheetContent>
+          </Sheet>
+        </>
       )}
       {/* Edit Modal */}
       <Sheet open={!!editModal} onOpenChange={v => { if (!v) closeEditModal(); }}>

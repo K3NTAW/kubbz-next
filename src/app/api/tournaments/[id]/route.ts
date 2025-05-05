@@ -11,7 +11,6 @@ const prisma = new PrismaClient();
 //   date: z.string().optional(),
 // });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function DELETE(
   req: NextRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,7 +28,6 @@ export async function DELETE(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function PUT(
   req: NextRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
