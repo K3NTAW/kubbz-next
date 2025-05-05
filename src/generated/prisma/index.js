@@ -215,6 +215,14 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl"
       }
     ],
     "previewFeatures": [],
@@ -232,7 +240,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -241,8 +249,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel accounts {\n  id                  String  @id\n  user_id             String\n  type                String\n  provider            String\n  provider_account_id String\n  refresh_token       String?\n  access_token        String?\n  expires_at          Int?\n  token_type          String?\n  scope               String?\n  id_token            String?\n  session_state       String?\n  users               users   @relation(fields: [user_id], references: [id], onDelete: Cascade)\n\n  @@unique([provider, provider_account_id])\n}\n\nmodel profiles {\n  id         String   @id\n  user_id    String   @unique\n  username   String?  @unique\n  full_name  String?\n  created_at DateTime @default(now())\n  updated_at DateTime\n  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n}\n\nmodel sessions {\n  id            String   @id\n  session_token String   @unique\n  user_id       String\n  expires       DateTime\n  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n}\n\nmodel users {\n  id             String       @id\n  name           String?\n  email          String?      @unique\n  email_verified DateTime?\n  image          String?\n  password       String?\n  user_metadata  Json?\n  accounts       accounts[]\n  profiles       profiles?\n  sessions       sessions[]\n  tournaments    Tournament[] @relation(\"UserTournaments\")\n  galleryPhotos  Gallery[]    @relation(\"UserGalleryPhotos\")\n}\n\nmodel verification_tokens {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}\n\nmodel Tournament {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  date        DateTime\n  createdBy   String\n  creator     users    @relation(\"UserTournaments\", fields: [createdBy], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n\nmodel Gallery {\n  id        String   @id @default(uuid())\n  imageUrl  String\n  userId    String\n  user      users    @relation(\"UserGalleryPhotos\", fields: [userId], references: [id], onDelete: Cascade)\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "4f521718627cf5c5eef0b356f52603a43e4775f85e7e89339cdb15cbb0cec0d6",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\", \"linux-musl\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel accounts {\n  id                  String  @id\n  user_id             String\n  type                String\n  provider            String\n  provider_account_id String\n  refresh_token       String?\n  access_token        String?\n  expires_at          Int?\n  token_type          String?\n  scope               String?\n  id_token            String?\n  session_state       String?\n  users               users   @relation(fields: [user_id], references: [id], onDelete: Cascade)\n\n  @@unique([provider, provider_account_id])\n}\n\nmodel profiles {\n  id         String   @id\n  user_id    String   @unique\n  username   String?  @unique\n  full_name  String?\n  created_at DateTime @default(now())\n  updated_at DateTime\n  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n}\n\nmodel sessions {\n  id            String   @id\n  session_token String   @unique\n  user_id       String\n  expires       DateTime\n  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade)\n}\n\nmodel users {\n  id             String       @id\n  name           String?\n  email          String?      @unique\n  email_verified DateTime?\n  image          String?\n  password       String?\n  user_metadata  Json?\n  accounts       accounts[]\n  profiles       profiles?\n  sessions       sessions[]\n  tournaments    Tournament[] @relation(\"UserTournaments\")\n  galleryPhotos  Gallery[]    @relation(\"UserGalleryPhotos\")\n}\n\nmodel verification_tokens {\n  identifier String\n  token      String   @unique\n  expires    DateTime\n\n  @@unique([identifier, token])\n}\n\nmodel Tournament {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  date        DateTime\n  createdBy   String\n  creator     users    @relation(\"UserTournaments\", fields: [createdBy], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n}\n\nmodel Gallery {\n  id        String   @id @default(uuid())\n  imageUrl  String\n  userId    String\n  user      users    @relation(\"UserGalleryPhotos\", fields: [userId], references: [id], onDelete: Cascade)\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "b02b54507060a5e59063f9b0c91553d6970f49bcfc657a8abe61ca67615fd934",
   "copyEngine": true
 }
 
@@ -283,6 +291,14 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
 path.join(process.cwd(), "src/generated/prisma/libquery_engine-darwin-arm64.dylib.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
+path.join(process.cwd(), "src/generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-linux-musl.so.node");
+path.join(process.cwd(), "src/generated/prisma/libquery_engine-linux-musl.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/generated/prisma/schema.prisma")
