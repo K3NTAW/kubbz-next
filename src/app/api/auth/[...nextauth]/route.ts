@@ -1,4 +1,6 @@
 import NextAuth from "next-auth/next";
+import type { AuthOptions, SessionStrategy, DefaultSession } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -7,7 +9,7 @@ import { compare } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
@@ -39,7 +41,7 @@ const handler = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt" as SessionStrategy },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
@@ -47,9 +49,9 @@ const handler = NextAuth({
     error: "/login", // Error code passed in query string as ?error=
   },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session, token }: { session: DefaultSession; token: JWT }) {
       if (token && session.user) {
-        session.user.id = token.sub;
+        (session.user as { id?: string }).id = token.sub;
         // Fetch user from DB to get user_metadata
         const user = await prisma.users.findUnique({
           where: { id: token.sub },
@@ -61,12 +63,14 @@ const handler = NextAuth({
           user.user_metadata !== null &&
           "role" in user.user_metadata
         ) {
-          session.user.role = (user.user_metadata as { role?: string }).role;
+          (session.user as { role?: string }).role = (user.user_metadata as { role?: string }).role;
         }
       }
       return session;
     },
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST }; 

@@ -1,5 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,7 +47,7 @@ export default function LoginPage() {
         setError(message);
       } else if (res?.ok) {
         setSuccess("Login successful! Redirecting...");
-        // Optionally, redirect here
+        router.push("/");
       }
     } catch {
       setError("Something went wrong. Please try again.");
