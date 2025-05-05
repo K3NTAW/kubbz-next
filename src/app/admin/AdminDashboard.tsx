@@ -147,7 +147,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   };
 
   // TanStack Table columns
-  const columns = useMemo<ColumnDef<any, any>[]>(
+  const columns = useMemo<ColumnDef<User, unknown>[]>(
     () => [
       {
         header: "Name",

@@ -16,5 +16,19 @@ export default async function AdminPage() {
     select: { id: true, name: true, description: true, date: true, createdAt: true, updatedAt: true },
     orderBy: { date: "desc" },
   });
-  return <AdminDashboard users={users} tournaments={tournaments} />;
+  return <AdminDashboard
+    users={users.map(u => ({
+      ...u,
+      name: u.name ?? undefined,
+      email: u.email ?? undefined,
+      user_metadata: (u.user_metadata && typeof u.user_metadata === 'object' && !Array.isArray(u.user_metadata))
+        ? u.user_metadata as { role?: string }
+        : { role: 'user' },
+    }))}
+    tournaments={tournaments.map(t => ({
+      ...t,
+      date: t.date instanceof Date ? t.date.toISOString() : t.date,
+      description: t.description ?? undefined,
+    }))}
+  />;
 } 

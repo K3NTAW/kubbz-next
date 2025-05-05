@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 
 export default function GalleryPage() {
   return (
@@ -18,10 +19,12 @@ export default function GalleryPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {/* Example images, replace with dynamic images from DB */}
               {[1,2,3,4,5,6].map((i) => (
-                <img
+                <Image
                   key={i}
                   src={`https://placehold.co/200x200?text=Photo+${i}`}
                   alt={`Photo ${i}`}
+                  width={200}
+                  height={200}
                   className="rounded-lg border object-cover w-full h-40"
                 />
               ))}

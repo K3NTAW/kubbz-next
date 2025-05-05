@@ -9,7 +9,7 @@ import { compare } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,

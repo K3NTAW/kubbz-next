@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@radix-ui/react-avatar";
+import Image from "next/image";
 
 export default function ProfilePage() {
   return (
@@ -13,9 +14,11 @@ export default function ProfilePage() {
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-2 mb-4">
             <Avatar>
-              <img
+              <Image
                 src="/avatar-placeholder.png"
                 alt="Profile"
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-full border"
               />
             </Avatar>
