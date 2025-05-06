@@ -32,9 +32,14 @@ type User = {
 };
 type Tournament = {
   id: string;
+  title: string;
   name: string;
-  date?: string;
   description?: string;
+  googleMapsUrl?: string;
+  price?: string;
+  maxPeople: string;
+  registeredPeople: string;
+  date?: string;
 };
 
 export default function AdminDashboard({ users, tournaments }: { users: User[]; tournaments: Tournament[] }) {
@@ -91,9 +96,14 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       email: (data as User).email || "",
       role: (data as User).user_metadata?.role || "user",
     } : {
+      title: (data as Tournament).title || "",
       name: (data as Tournament).name || "",
       date: (data as Tournament).date ? new Date((data as Tournament).date!).toISOString().slice(0, 10) : "",
       description: (data as Tournament).description || "",
+      googleMapsUrl: (data as Tournament).googleMapsUrl || "",
+      price: (data as Tournament).price || "",
+      maxPeople: (data as Tournament).maxPeople || "",
+      registeredPeople: (data as Tournament).registeredPeople || "",
     });
     setEditModal({ type, data });
     setError(null);
@@ -147,7 +157,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     }
   };
   const openCreateModal = () => {
-    setForm({ name: "", date: "", description: "" });
+    setForm({ title: "", name: "", date: "", description: "", googleMapsUrl: "", price: "", maxPeople: "", registeredPeople: "0" });
     setCreateModal(true);
     setError(null);
   };
@@ -161,16 +171,18 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     setLoading(true);
     setError(null);
     try {
-      // TODO: Replace with actual user id from session
-      const createdBy = "admin-id";
       const res = await fetch("/api/tournaments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          title: form.title,
           name: form.name,
           date: form.date,
           description: form.description,
-          createdBy,
+          googleMapsUrl: form.googleMapsUrl,
+          price: form.price,
+          maxPeople: form.maxPeople,
+          registeredPeople: form.registeredPeople,
         }),
       });
       if (!res.ok) throw new Error("Failed to create tournament");
@@ -287,16 +299,24 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Title</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Date</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Max People</TableHead>
+                <TableHead>Registered</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {tournamentList.map((t) => (
                 <TableRow key={t.id}>
+                  <TableCell>{t.title}</TableCell>
                   <TableCell>{t.name}</TableCell>
                   <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
+                  <TableCell>{t.price ?? "-"}</TableCell>
+                  <TableCell>{t.maxPeople}</TableCell>
+                  <TableCell>{t.registeredPeople}</TableCell>
                   <TableCell>
                     <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", t)}>
                       Edit
@@ -319,9 +339,27 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                 </SheetDescription>
               </SheetHeader>
               <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 p-4">
+                <Input name="title" placeholder="Title" value={form.title || ""} onChange={handleFormChange} required />
                 <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
                 <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
                 <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
+                <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
+                {form.googleMapsUrl && (
+                  <iframe
+                    src={form.googleMapsUrl}
+                    width="100%"
+                    height="200"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                )}
+                <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
+                <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
+                <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
+                {/* Placeholder for image upload/linking */}
+                <div className="text-xs text-muted-foreground">Image linking coming soon</div>
                 <SheetFooter>
                   <Button type="submit" disabled={loading}>{loading ? "Creating..." : "Create"}</Button>
                   <SheetClose asChild>
@@ -352,9 +390,27 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
               </>
             ) : (
               <>
+                <Input name="title" placeholder="Title" value={form.title || ""} onChange={handleFormChange} required />
                 <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
                 <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
                 <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
+                <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
+                {form.googleMapsUrl && (
+                  <iframe
+                    src={form.googleMapsUrl}
+                    width="100%"
+                    height="200"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                )}
+                <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
+                <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
+                <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
+                {/* Placeholder for image upload/linking */}
+                <div className="text-xs text-muted-foreground">Image linking coming soon</div>
               </>
             )}
             <SheetFooter>

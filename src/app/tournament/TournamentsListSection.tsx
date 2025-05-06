@@ -7,34 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { format, isWithinInterval, parseISO } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
-// Mock tournaments data
-const tournaments = [
-  {
-    id: "1",
-    name: "KUBB ZÜRI Open",
-    description: "Das grosse Teamturnier auf dem Dolder.",
-    date: "2024-05-18",
-  },
-  {
-    id: "2",
-    name: "Single Turnier",
-    description: "Das Einzelturnier auf der Josefwiese.",
-    date: "2024-06-29",
-  },
-  {
-    id: "3",
-    name: "Herbst Kubb Cup",
-    description: "Ein freundschaftliches Turnier im Herbst.",
-    date: "2024-09-15",
-  },
-  {
-    id: "4",
-    name: "Winter Kubb Gaudi",
-    description: "Kubb im Schnee!",
-    date: "2024-12-10",
-  },
-];
+export type TournamentListType = {
+  id: string;
+  title: string;
+  name: string;
+  description?: string;
+  googleMapsUrl?: string;
+  price?: string;
+  maxPeople: string;
+  registeredPeople: string;
+  date: string;
+};
+
+interface TournamentsListSectionProps {
+  tournaments: TournamentListType[];
+}
 
 const seasons = [
   { label: "Alle", value: "all" },
@@ -53,7 +42,7 @@ function getSeason(dateStr: string) {
   return "winter";
 }
 
-export default function TournamentsListSection() {
+export default function TournamentsListSection({ tournaments }: TournamentsListSectionProps) {
   const [search, setSearch] = useState("");
   const [season, setSeason] = useState("all");
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: "", end: "" });
@@ -148,7 +137,9 @@ export default function TournamentsListSection() {
                   <CardContent>
                     <div className="mb-2 text-sm text-muted-foreground">{format(parseISO(t.date), "dd.MM.yyyy")}</div>
                     <div className="mb-4 min-h-[48px]">{t.description}</div>
-                    <Button variant="outline" size="sm">Details</Button>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/tournament/${t.id}`}>Details</Link>
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>

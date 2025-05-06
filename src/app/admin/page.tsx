@@ -13,7 +13,19 @@ export default async function AdminPage() {
     orderBy: { name: "asc" },
   });
   const tournaments = await prisma.tournament.findMany({
-    select: { id: true, name: true, description: true, date: true, createdAt: true, updatedAt: true },
+    select: {
+      id: true,
+      title: true,
+      name: true,
+      description: true,
+      googleMapsUrl: true,
+      price: true,
+      maxPeople: true,
+      registeredPeople: true,
+      date: true,
+      createdAt: true,
+      updatedAt: true,
+    },
     orderBy: { date: "desc" },
   });
   return <AdminDashboard
@@ -29,6 +41,11 @@ export default async function AdminPage() {
       ...t,
       date: t.date instanceof Date ? t.date.toISOString() : t.date,
       description: t.description ?? undefined,
+      title: t.title ?? "",
+      googleMapsUrl: t.googleMapsUrl ?? "",
+      price: t.price?.toString() ?? "",
+      maxPeople: t.maxPeople?.toString() ?? "",
+      registeredPeople: t.registeredPeople?.toString() ?? "0",
     }))}
   />;
 } 

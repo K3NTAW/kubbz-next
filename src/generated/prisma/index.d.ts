@@ -1469,6 +1469,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type TournamentCountOutputType
+   */
+
+  export type TournamentCountOutputType = {
+    galleryPhotos: number
+  }
+
+  export type TournamentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    galleryPhotos?: boolean | TournamentCountOutputTypeCountGalleryPhotosArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TournamentCountOutputType without action
+   */
+  export type TournamentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentCountOutputType
+     */
+    select?: TournamentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TournamentCountOutputType without action
+   */
+  export type TournamentCountOutputTypeCountGalleryPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GalleryWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -6945,14 +6976,33 @@ export namespace Prisma {
 
   export type AggregateTournament = {
     _count: TournamentCountAggregateOutputType | null
+    _avg: TournamentAvgAggregateOutputType | null
+    _sum: TournamentSumAggregateOutputType | null
     _min: TournamentMinAggregateOutputType | null
     _max: TournamentMaxAggregateOutputType | null
   }
 
+  export type TournamentAvgAggregateOutputType = {
+    price: number | null
+    maxPeople: number | null
+    registeredPeople: number | null
+  }
+
+  export type TournamentSumAggregateOutputType = {
+    price: number | null
+    maxPeople: number | null
+    registeredPeople: number | null
+  }
+
   export type TournamentMinAggregateOutputType = {
     id: string | null
+    title: string | null
     name: string | null
     description: string | null
+    googleMapsUrl: string | null
+    price: number | null
+    maxPeople: number | null
+    registeredPeople: number | null
     date: Date | null
     createdBy: string | null
     createdAt: Date | null
@@ -6961,8 +7011,13 @@ export namespace Prisma {
 
   export type TournamentMaxAggregateOutputType = {
     id: string | null
+    title: string | null
     name: string | null
     description: string | null
+    googleMapsUrl: string | null
+    price: number | null
+    maxPeople: number | null
+    registeredPeople: number | null
     date: Date | null
     createdBy: string | null
     createdAt: Date | null
@@ -6971,8 +7026,13 @@ export namespace Prisma {
 
   export type TournamentCountAggregateOutputType = {
     id: number
+    title: number
     name: number
     description: number
+    googleMapsUrl: number
+    price: number
+    maxPeople: number
+    registeredPeople: number
     date: number
     createdBy: number
     createdAt: number
@@ -6981,10 +7041,27 @@ export namespace Prisma {
   }
 
 
+  export type TournamentAvgAggregateInputType = {
+    price?: true
+    maxPeople?: true
+    registeredPeople?: true
+  }
+
+  export type TournamentSumAggregateInputType = {
+    price?: true
+    maxPeople?: true
+    registeredPeople?: true
+  }
+
   export type TournamentMinAggregateInputType = {
     id?: true
+    title?: true
     name?: true
     description?: true
+    googleMapsUrl?: true
+    price?: true
+    maxPeople?: true
+    registeredPeople?: true
     date?: true
     createdBy?: true
     createdAt?: true
@@ -6993,8 +7070,13 @@ export namespace Prisma {
 
   export type TournamentMaxAggregateInputType = {
     id?: true
+    title?: true
     name?: true
     description?: true
+    googleMapsUrl?: true
+    price?: true
+    maxPeople?: true
+    registeredPeople?: true
     date?: true
     createdBy?: true
     createdAt?: true
@@ -7003,8 +7085,13 @@ export namespace Prisma {
 
   export type TournamentCountAggregateInputType = {
     id?: true
+    title?: true
     name?: true
     description?: true
+    googleMapsUrl?: true
+    price?: true
+    maxPeople?: true
+    registeredPeople?: true
     date?: true
     createdBy?: true
     createdAt?: true
@@ -7050,6 +7137,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TournamentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TournamentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TournamentMinAggregateInputType
@@ -7080,19 +7179,28 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TournamentCountAggregateInputType | true
+    _avg?: TournamentAvgAggregateInputType
+    _sum?: TournamentSumAggregateInputType
     _min?: TournamentMinAggregateInputType
     _max?: TournamentMaxAggregateInputType
   }
 
   export type TournamentGroupByOutputType = {
     id: string
+    title: string
     name: string
     description: string | null
+    googleMapsUrl: string | null
+    price: number | null
+    maxPeople: number
+    registeredPeople: number
     date: Date
     createdBy: string
     createdAt: Date
     updatedAt: Date
     _count: TournamentCountAggregateOutputType | null
+    _avg: TournamentAvgAggregateOutputType | null
+    _sum: TournamentSumAggregateOutputType | null
     _min: TournamentMinAggregateOutputType | null
     _max: TournamentMaxAggregateOutputType | null
   }
@@ -7113,19 +7221,31 @@ export namespace Prisma {
 
   export type TournamentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    title?: boolean
     name?: boolean
     description?: boolean
+    googleMapsUrl?: boolean
+    price?: boolean
+    maxPeople?: boolean
+    registeredPeople?: boolean
     date?: boolean
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    galleryPhotos?: boolean | Tournament$galleryPhotosArgs<ExtArgs>
+    _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tournament"]>
 
   export type TournamentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    title?: boolean
     name?: boolean
     description?: boolean
+    googleMapsUrl?: boolean
+    price?: boolean
+    maxPeople?: boolean
+    registeredPeople?: boolean
     date?: boolean
     createdBy?: boolean
     createdAt?: boolean
@@ -7135,8 +7255,13 @@ export namespace Prisma {
 
   export type TournamentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    title?: boolean
     name?: boolean
     description?: boolean
+    googleMapsUrl?: boolean
+    price?: boolean
+    maxPeople?: boolean
+    registeredPeople?: boolean
     date?: boolean
     createdBy?: boolean
     createdAt?: boolean
@@ -7146,17 +7271,24 @@ export namespace Prisma {
 
   export type TournamentSelectScalar = {
     id?: boolean
+    title?: boolean
     name?: boolean
     description?: boolean
+    googleMapsUrl?: boolean
+    price?: boolean
+    maxPeople?: boolean
+    registeredPeople?: boolean
     date?: boolean
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TournamentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "date" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["tournament"]>
+  export type TournamentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "name" | "description" | "googleMapsUrl" | "price" | "maxPeople" | "registeredPeople" | "date" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["tournament"]>
   export type TournamentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    galleryPhotos?: boolean | Tournament$galleryPhotosArgs<ExtArgs>
+    _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TournamentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
@@ -7169,11 +7301,17 @@ export namespace Prisma {
     name: "Tournament"
     objects: {
       creator: Prisma.$usersPayload<ExtArgs>
+      galleryPhotos: Prisma.$GalleryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      title: string
       name: string
       description: string | null
+      googleMapsUrl: string | null
+      price: number | null
+      maxPeople: number
+      registeredPeople: number
       date: Date
       createdBy: string
       createdAt: Date
@@ -7573,6 +7711,7 @@ export namespace Prisma {
   export interface Prisma__TournamentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     creator<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    galleryPhotos<T extends Tournament$galleryPhotosArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$galleryPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GalleryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7603,8 +7742,13 @@ export namespace Prisma {
    */
   interface TournamentFieldRefs {
     readonly id: FieldRef<"Tournament", 'String'>
+    readonly title: FieldRef<"Tournament", 'String'>
     readonly name: FieldRef<"Tournament", 'String'>
     readonly description: FieldRef<"Tournament", 'String'>
+    readonly googleMapsUrl: FieldRef<"Tournament", 'String'>
+    readonly price: FieldRef<"Tournament", 'Float'>
+    readonly maxPeople: FieldRef<"Tournament", 'Int'>
+    readonly registeredPeople: FieldRef<"Tournament", 'Int'>
     readonly date: FieldRef<"Tournament", 'DateTime'>
     readonly createdBy: FieldRef<"Tournament", 'String'>
     readonly createdAt: FieldRef<"Tournament", 'DateTime'>
@@ -8005,6 +8149,30 @@ export namespace Prisma {
   }
 
   /**
+   * Tournament.galleryPhotos
+   */
+  export type Tournament$galleryPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Gallery
+     */
+    select?: GallerySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Gallery
+     */
+    omit?: GalleryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GalleryInclude<ExtArgs> | null
+    where?: GalleryWhereInput
+    orderBy?: GalleryOrderByWithRelationInput | GalleryOrderByWithRelationInput[]
+    cursor?: GalleryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GalleryScalarFieldEnum | GalleryScalarFieldEnum[]
+  }
+
+  /**
    * Tournament without action
    */
   export type TournamentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8037,6 +8205,7 @@ export namespace Prisma {
     id: string | null
     imageUrl: string | null
     userId: string | null
+    tournamentId: string | null
     createdAt: Date | null
   }
 
@@ -8044,6 +8213,7 @@ export namespace Prisma {
     id: string | null
     imageUrl: string | null
     userId: string | null
+    tournamentId: string | null
     createdAt: Date | null
   }
 
@@ -8051,6 +8221,7 @@ export namespace Prisma {
     id: number
     imageUrl: number
     userId: number
+    tournamentId: number
     createdAt: number
     _all: number
   }
@@ -8060,6 +8231,7 @@ export namespace Prisma {
     id?: true
     imageUrl?: true
     userId?: true
+    tournamentId?: true
     createdAt?: true
   }
 
@@ -8067,6 +8239,7 @@ export namespace Prisma {
     id?: true
     imageUrl?: true
     userId?: true
+    tournamentId?: true
     createdAt?: true
   }
 
@@ -8074,6 +8247,7 @@ export namespace Prisma {
     id?: true
     imageUrl?: true
     userId?: true
+    tournamentId?: true
     createdAt?: true
     _all?: true
   }
@@ -8154,6 +8328,7 @@ export namespace Prisma {
     id: string
     imageUrl: string
     userId: string
+    tournamentId: string | null
     createdAt: Date
     _count: GalleryCountAggregateOutputType | null
     _min: GalleryMinAggregateOutputType | null
@@ -8178,53 +8353,65 @@ export namespace Prisma {
     id?: boolean
     imageUrl?: boolean
     userId?: boolean
+    tournamentId?: boolean
     createdAt?: boolean
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }, ExtArgs["result"]["gallery"]>
 
   export type GallerySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     imageUrl?: boolean
     userId?: boolean
+    tournamentId?: boolean
     createdAt?: boolean
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }, ExtArgs["result"]["gallery"]>
 
   export type GallerySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     imageUrl?: boolean
     userId?: boolean
+    tournamentId?: boolean
     createdAt?: boolean
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }, ExtArgs["result"]["gallery"]>
 
   export type GallerySelectScalar = {
     id?: boolean
     imageUrl?: boolean
     userId?: boolean
+    tournamentId?: boolean
     createdAt?: boolean
   }
 
-  export type GalleryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "imageUrl" | "userId" | "createdAt", ExtArgs["result"]["gallery"]>
+  export type GalleryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "imageUrl" | "userId" | "tournamentId" | "createdAt", ExtArgs["result"]["gallery"]>
   export type GalleryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }
   export type GalleryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }
   export type GalleryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | Gallery$tournamentArgs<ExtArgs>
   }
 
   export type $GalleryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Gallery"
     objects: {
       user: Prisma.$usersPayload<ExtArgs>
+      tournament: Prisma.$TournamentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       imageUrl: string
       userId: string
+      tournamentId: string | null
       createdAt: Date
     }, ExtArgs["result"]["gallery"]>
     composites: {}
@@ -8621,6 +8808,7 @@ export namespace Prisma {
   export interface Prisma__GalleryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    tournament<T extends Gallery$tournamentArgs<ExtArgs> = {}>(args?: Subset<T, Gallery$tournamentArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8653,6 +8841,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Gallery", 'String'>
     readonly imageUrl: FieldRef<"Gallery", 'String'>
     readonly userId: FieldRef<"Gallery", 'String'>
+    readonly tournamentId: FieldRef<"Gallery", 'String'>
     readonly createdAt: FieldRef<"Gallery", 'DateTime'>
   }
     
@@ -9050,6 +9239,25 @@ export namespace Prisma {
   }
 
   /**
+   * Gallery.tournament
+   */
+  export type Gallery$tournamentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tournament
+     */
+    select?: TournamentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tournament
+     */
+    omit?: TournamentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentInclude<ExtArgs> | null
+    where?: TournamentWhereInput
+  }
+
+  /**
    * Gallery without action
    */
   export type GalleryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9146,8 +9354,13 @@ export namespace Prisma {
 
   export const TournamentScalarFieldEnum: {
     id: 'id',
+    title: 'title',
     name: 'name',
     description: 'description',
+    googleMapsUrl: 'googleMapsUrl',
+    price: 'price',
+    maxPeople: 'maxPeople',
+    registeredPeople: 'registeredPeople',
     date: 'date',
     createdBy: 'createdBy',
     createdAt: 'createdAt',
@@ -9161,6 +9374,7 @@ export namespace Prisma {
     id: 'id',
     imageUrl: 'imageUrl',
     userId: 'userId',
+    tournamentId: 'tournamentId',
     createdAt: 'createdAt'
   };
 
@@ -9614,24 +9828,36 @@ export namespace Prisma {
     OR?: TournamentWhereInput[]
     NOT?: TournamentWhereInput | TournamentWhereInput[]
     id?: StringFilter<"Tournament"> | string
+    title?: StringFilter<"Tournament"> | string
     name?: StringFilter<"Tournament"> | string
     description?: StringNullableFilter<"Tournament"> | string | null
+    googleMapsUrl?: StringNullableFilter<"Tournament"> | string | null
+    price?: FloatNullableFilter<"Tournament"> | number | null
+    maxPeople?: IntFilter<"Tournament"> | number
+    registeredPeople?: IntFilter<"Tournament"> | number
     date?: DateTimeFilter<"Tournament"> | Date | string
     createdBy?: StringFilter<"Tournament"> | string
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    galleryPhotos?: GalleryListRelationFilter
   }
 
   export type TournamentOrderByWithRelationInput = {
     id?: SortOrder
+    title?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
+    googleMapsUrl?: SortOrderInput | SortOrder
+    price?: SortOrderInput | SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
     date?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creator?: usersOrderByWithRelationInput
+    galleryPhotos?: GalleryOrderByRelationAggregateInput
   }
 
   export type TournamentWhereUniqueInput = Prisma.AtLeast<{
@@ -9639,26 +9865,39 @@ export namespace Prisma {
     AND?: TournamentWhereInput | TournamentWhereInput[]
     OR?: TournamentWhereInput[]
     NOT?: TournamentWhereInput | TournamentWhereInput[]
+    title?: StringFilter<"Tournament"> | string
     name?: StringFilter<"Tournament"> | string
     description?: StringNullableFilter<"Tournament"> | string | null
+    googleMapsUrl?: StringNullableFilter<"Tournament"> | string | null
+    price?: FloatNullableFilter<"Tournament"> | number | null
+    maxPeople?: IntFilter<"Tournament"> | number
+    registeredPeople?: IntFilter<"Tournament"> | number
     date?: DateTimeFilter<"Tournament"> | Date | string
     createdBy?: StringFilter<"Tournament"> | string
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    galleryPhotos?: GalleryListRelationFilter
   }, "id">
 
   export type TournamentOrderByWithAggregationInput = {
     id?: SortOrder
+    title?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
+    googleMapsUrl?: SortOrderInput | SortOrder
+    price?: SortOrderInput | SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
     date?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TournamentCountOrderByAggregateInput
+    _avg?: TournamentAvgOrderByAggregateInput
     _max?: TournamentMaxOrderByAggregateInput
     _min?: TournamentMinOrderByAggregateInput
+    _sum?: TournamentSumOrderByAggregateInput
   }
 
   export type TournamentScalarWhereWithAggregatesInput = {
@@ -9666,8 +9905,13 @@ export namespace Prisma {
     OR?: TournamentScalarWhereWithAggregatesInput[]
     NOT?: TournamentScalarWhereWithAggregatesInput | TournamentScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Tournament"> | string
+    title?: StringWithAggregatesFilter<"Tournament"> | string
     name?: StringWithAggregatesFilter<"Tournament"> | string
     description?: StringNullableWithAggregatesFilter<"Tournament"> | string | null
+    googleMapsUrl?: StringNullableWithAggregatesFilter<"Tournament"> | string | null
+    price?: FloatNullableWithAggregatesFilter<"Tournament"> | number | null
+    maxPeople?: IntWithAggregatesFilter<"Tournament"> | number
+    registeredPeople?: IntWithAggregatesFilter<"Tournament"> | number
     date?: DateTimeWithAggregatesFilter<"Tournament"> | Date | string
     createdBy?: StringWithAggregatesFilter<"Tournament"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Tournament"> | Date | string
@@ -9681,16 +9925,20 @@ export namespace Prisma {
     id?: StringFilter<"Gallery"> | string
     imageUrl?: StringFilter<"Gallery"> | string
     userId?: StringFilter<"Gallery"> | string
+    tournamentId?: StringNullableFilter<"Gallery"> | string | null
     createdAt?: DateTimeFilter<"Gallery"> | Date | string
     user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    tournament?: XOR<TournamentNullableScalarRelationFilter, TournamentWhereInput> | null
   }
 
   export type GalleryOrderByWithRelationInput = {
     id?: SortOrder
     imageUrl?: SortOrder
     userId?: SortOrder
+    tournamentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     user?: usersOrderByWithRelationInput
+    tournament?: TournamentOrderByWithRelationInput
   }
 
   export type GalleryWhereUniqueInput = Prisma.AtLeast<{
@@ -9700,14 +9948,17 @@ export namespace Prisma {
     NOT?: GalleryWhereInput | GalleryWhereInput[]
     imageUrl?: StringFilter<"Gallery"> | string
     userId?: StringFilter<"Gallery"> | string
+    tournamentId?: StringNullableFilter<"Gallery"> | string | null
     createdAt?: DateTimeFilter<"Gallery"> | Date | string
     user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    tournament?: XOR<TournamentNullableScalarRelationFilter, TournamentWhereInput> | null
   }, "id">
 
   export type GalleryOrderByWithAggregationInput = {
     id?: SortOrder
     imageUrl?: SortOrder
     userId?: SortOrder
+    tournamentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: GalleryCountOrderByAggregateInput
     _max?: GalleryMaxOrderByAggregateInput
@@ -9721,6 +9972,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Gallery"> | string
     imageUrl?: StringWithAggregatesFilter<"Gallery"> | string
     userId?: StringWithAggregatesFilter<"Gallery"> | string
+    tournamentId?: StringNullableWithAggregatesFilter<"Gallery"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Gallery"> | Date | string
   }
 
@@ -10072,48 +10324,77 @@ export namespace Prisma {
 
   export type TournamentCreateInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: usersCreateNestedOneWithoutTournamentsInput
+    galleryPhotos?: GalleryCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: usersUpdateOneRequiredWithoutTournamentsNestedInput
+    galleryPhotos?: GalleryUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    galleryPhotos?: GalleryUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentCreateManyInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdBy: string
     createdAt?: Date | string
@@ -10122,8 +10403,13 @@ export namespace Prisma {
 
   export type TournamentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10131,8 +10417,13 @@ export namespace Prisma {
 
   export type TournamentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10144,12 +10435,14 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     user: usersCreateNestedOneWithoutGalleryPhotosInput
+    tournament?: TournamentCreateNestedOneWithoutGalleryPhotosInput
   }
 
   export type GalleryUncheckedCreateInput = {
     id?: string
     imageUrl: string
     userId: string
+    tournamentId?: string | null
     createdAt?: Date | string
   }
 
@@ -10158,12 +10451,14 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutGalleryPhotosNestedInput
+    tournament?: TournamentUpdateOneWithoutGalleryPhotosNestedInput
   }
 
   export type GalleryUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10171,6 +10466,7 @@ export namespace Prisma {
     id?: string
     imageUrl: string
     userId: string
+    tournamentId?: string | null
     createdAt?: Date | string
   }
 
@@ -10184,6 +10480,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10591,20 +10888,58 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type TournamentCountOrderByAggregateInput = {
     id?: SortOrder
+    title?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    googleMapsUrl?: SortOrder
+    price?: SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
     date?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
+  export type TournamentAvgOrderByAggregateInput = {
+    price?: SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
+  }
+
   export type TournamentMaxOrderByAggregateInput = {
     id?: SortOrder
+    title?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    googleMapsUrl?: SortOrder
+    price?: SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
     date?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
@@ -10613,18 +10948,67 @@ export namespace Prisma {
 
   export type TournamentMinOrderByAggregateInput = {
     id?: SortOrder
+    title?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    googleMapsUrl?: SortOrder
+    price?: SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
     date?: SortOrder
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
+  export type TournamentSumOrderByAggregateInput = {
+    price?: SortOrder
+    maxPeople?: SortOrder
+    registeredPeople?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type TournamentNullableScalarRelationFilter = {
+    is?: TournamentWhereInput | null
+    isNot?: TournamentWhereInput | null
+  }
+
   export type GalleryCountOrderByAggregateInput = {
     id?: SortOrder
     imageUrl?: SortOrder
     userId?: SortOrder
+    tournamentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -10632,6 +11016,7 @@ export namespace Prisma {
     id?: SortOrder
     imageUrl?: SortOrder
     userId?: SortOrder
+    tournamentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -10639,6 +11024,7 @@ export namespace Prisma {
     id?: SortOrder
     imageUrl?: SortOrder
     userId?: SortOrder
+    tournamentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -10914,6 +11300,36 @@ export namespace Prisma {
     connect?: usersWhereUniqueInput
   }
 
+  export type GalleryCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
+    createMany?: GalleryCreateManyTournamentInputEnvelope
+    connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+  }
+
+  export type GalleryUncheckedCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
+    createMany?: GalleryCreateManyTournamentInputEnvelope
+    connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type usersUpdateOneRequiredWithoutTournamentsNestedInput = {
     create?: XOR<usersCreateWithoutTournamentsInput, usersUncheckedCreateWithoutTournamentsInput>
     connectOrCreate?: usersCreateOrConnectWithoutTournamentsInput
@@ -10922,10 +11338,44 @@ export namespace Prisma {
     update?: XOR<XOR<usersUpdateToOneWithWhereWithoutTournamentsInput, usersUpdateWithoutTournamentsInput>, usersUncheckedUpdateWithoutTournamentsInput>
   }
 
+  export type GalleryUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
+    upsert?: GalleryUpsertWithWhereUniqueWithoutTournamentInput | GalleryUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: GalleryCreateManyTournamentInputEnvelope
+    set?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    disconnect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    delete?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    update?: GalleryUpdateWithWhereUniqueWithoutTournamentInput | GalleryUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: GalleryUpdateManyWithWhereWithoutTournamentInput | GalleryUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
+  }
+
+  export type GalleryUncheckedUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
+    upsert?: GalleryUpsertWithWhereUniqueWithoutTournamentInput | GalleryUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: GalleryCreateManyTournamentInputEnvelope
+    set?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    disconnect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    delete?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+    update?: GalleryUpdateWithWhereUniqueWithoutTournamentInput | GalleryUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: GalleryUpdateManyWithWhereWithoutTournamentInput | GalleryUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
+  }
+
   export type usersCreateNestedOneWithoutGalleryPhotosInput = {
     create?: XOR<usersCreateWithoutGalleryPhotosInput, usersUncheckedCreateWithoutGalleryPhotosInput>
     connectOrCreate?: usersCreateOrConnectWithoutGalleryPhotosInput
     connect?: usersWhereUniqueInput
+  }
+
+  export type TournamentCreateNestedOneWithoutGalleryPhotosInput = {
+    create?: XOR<TournamentCreateWithoutGalleryPhotosInput, TournamentUncheckedCreateWithoutGalleryPhotosInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutGalleryPhotosInput
+    connect?: TournamentWhereUniqueInput
   }
 
   export type usersUpdateOneRequiredWithoutGalleryPhotosNestedInput = {
@@ -10934,6 +11384,16 @@ export namespace Prisma {
     upsert?: usersUpsertWithoutGalleryPhotosInput
     connect?: usersWhereUniqueInput
     update?: XOR<XOR<usersUpdateToOneWithWhereWithoutGalleryPhotosInput, usersUpdateWithoutGalleryPhotosInput>, usersUncheckedUpdateWithoutGalleryPhotosInput>
+  }
+
+  export type TournamentUpdateOneWithoutGalleryPhotosNestedInput = {
+    create?: XOR<TournamentCreateWithoutGalleryPhotosInput, TournamentUncheckedCreateWithoutGalleryPhotosInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutGalleryPhotosInput
+    upsert?: TournamentUpsertWithoutGalleryPhotosInput
+    disconnect?: TournamentWhereInput | boolean
+    delete?: TournamentWhereInput | boolean
+    connect?: TournamentWhereUniqueInput
+    update?: XOR<XOR<TournamentUpdateToOneWithWhereWithoutGalleryPhotosInput, TournamentUpdateWithoutGalleryPhotosInput>, TournamentUncheckedUpdateWithoutGalleryPhotosInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11118,6 +11578,49 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type usersCreateWithoutAccountsInput = {
@@ -11419,20 +11922,32 @@ export namespace Prisma {
 
   export type TournamentCreateWithoutCreatorInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    galleryPhotos?: GalleryCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutCreatorInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutCreatorInput = {
@@ -11449,11 +11964,13 @@ export namespace Prisma {
     id?: string
     imageUrl: string
     createdAt?: Date | string
+    tournament?: TournamentCreateNestedOneWithoutGalleryPhotosInput
   }
 
   export type GalleryUncheckedCreateWithoutUserInput = {
     id?: string
     imageUrl: string
+    tournamentId?: string | null
     createdAt?: Date | string
   }
 
@@ -11575,8 +12092,13 @@ export namespace Prisma {
     OR?: TournamentScalarWhereInput[]
     NOT?: TournamentScalarWhereInput | TournamentScalarWhereInput[]
     id?: StringFilter<"Tournament"> | string
+    title?: StringFilter<"Tournament"> | string
     name?: StringFilter<"Tournament"> | string
     description?: StringNullableFilter<"Tournament"> | string | null
+    googleMapsUrl?: StringNullableFilter<"Tournament"> | string | null
+    price?: FloatNullableFilter<"Tournament"> | number | null
+    maxPeople?: IntFilter<"Tournament"> | number
+    registeredPeople?: IntFilter<"Tournament"> | number
     date?: DateTimeFilter<"Tournament"> | Date | string
     createdBy?: StringFilter<"Tournament"> | string
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
@@ -11606,6 +12128,7 @@ export namespace Prisma {
     id?: StringFilter<"Gallery"> | string
     imageUrl?: StringFilter<"Gallery"> | string
     userId?: StringFilter<"Gallery"> | string
+    tournamentId?: StringNullableFilter<"Gallery"> | string | null
     createdAt?: DateTimeFilter<"Gallery"> | Date | string
   }
 
@@ -11640,6 +12163,30 @@ export namespace Prisma {
   export type usersCreateOrConnectWithoutTournamentsInput = {
     where: usersWhereUniqueInput
     create: XOR<usersCreateWithoutTournamentsInput, usersUncheckedCreateWithoutTournamentsInput>
+  }
+
+  export type GalleryCreateWithoutTournamentInput = {
+    id?: string
+    imageUrl: string
+    createdAt?: Date | string
+    user: usersCreateNestedOneWithoutGalleryPhotosInput
+  }
+
+  export type GalleryUncheckedCreateWithoutTournamentInput = {
+    id?: string
+    imageUrl: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type GalleryCreateOrConnectWithoutTournamentInput = {
+    where: GalleryWhereUniqueInput
+    create: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type GalleryCreateManyTournamentInputEnvelope = {
+    data: GalleryCreateManyTournamentInput | GalleryCreateManyTournamentInput[]
+    skipDuplicates?: boolean
   }
 
   export type usersUpsertWithoutTournamentsInput = {
@@ -11681,6 +12228,22 @@ export namespace Prisma {
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type GalleryUpsertWithWhereUniqueWithoutTournamentInput = {
+    where: GalleryWhereUniqueInput
+    update: XOR<GalleryUpdateWithoutTournamentInput, GalleryUncheckedUpdateWithoutTournamentInput>
+    create: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type GalleryUpdateWithWhereUniqueWithoutTournamentInput = {
+    where: GalleryWhereUniqueInput
+    data: XOR<GalleryUpdateWithoutTournamentInput, GalleryUncheckedUpdateWithoutTournamentInput>
+  }
+
+  export type GalleryUpdateManyWithWhereWithoutTournamentInput = {
+    where: GalleryScalarWhereInput
+    data: XOR<GalleryUpdateManyMutationInput, GalleryUncheckedUpdateManyWithoutTournamentInput>
+  }
+
   export type usersCreateWithoutGalleryPhotosInput = {
     id: string
     name?: string | null
@@ -11712,6 +12275,41 @@ export namespace Prisma {
   export type usersCreateOrConnectWithoutGalleryPhotosInput = {
     where: usersWhereUniqueInput
     create: XOR<usersCreateWithoutGalleryPhotosInput, usersUncheckedCreateWithoutGalleryPhotosInput>
+  }
+
+  export type TournamentCreateWithoutGalleryPhotosInput = {
+    id?: string
+    title: string
+    name: string
+    description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
+    date: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: usersCreateNestedOneWithoutTournamentsInput
+  }
+
+  export type TournamentUncheckedCreateWithoutGalleryPhotosInput = {
+    id?: string
+    title: string
+    name: string
+    description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
+    date: Date | string
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TournamentCreateOrConnectWithoutGalleryPhotosInput = {
+    where: TournamentWhereUniqueInput
+    create: XOR<TournamentCreateWithoutGalleryPhotosInput, TournamentUncheckedCreateWithoutGalleryPhotosInput>
   }
 
   export type usersUpsertWithoutGalleryPhotosInput = {
@@ -11753,6 +12351,47 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
+  export type TournamentUpsertWithoutGalleryPhotosInput = {
+    update: XOR<TournamentUpdateWithoutGalleryPhotosInput, TournamentUncheckedUpdateWithoutGalleryPhotosInput>
+    create: XOR<TournamentCreateWithoutGalleryPhotosInput, TournamentUncheckedCreateWithoutGalleryPhotosInput>
+    where?: TournamentWhereInput
+  }
+
+  export type TournamentUpdateToOneWithWhereWithoutGalleryPhotosInput = {
+    where?: TournamentWhereInput
+    data: XOR<TournamentUpdateWithoutGalleryPhotosInput, TournamentUncheckedUpdateWithoutGalleryPhotosInput>
+  }
+
+  export type TournamentUpdateWithoutGalleryPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: usersUpdateOneRequiredWithoutTournamentsNestedInput
+  }
+
+  export type TournamentUncheckedUpdateWithoutGalleryPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type accountsCreateManyUsersInput = {
     id: string
     type: string
@@ -11775,8 +12414,13 @@ export namespace Prisma {
 
   export type TournamentCreateManyCreatorInput = {
     id?: string
+    title: string
     name: string
     description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
     date: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11785,6 +12429,7 @@ export namespace Prisma {
   export type GalleryCreateManyUserInput = {
     id?: string
     imageUrl: string
+    tournamentId?: string | null
     createdAt?: Date | string
   }
 
@@ -11850,26 +12495,43 @@ export namespace Prisma {
 
   export type TournamentUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    galleryPhotos?: GalleryUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    galleryPhotos?: GalleryUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateManyWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11879,17 +12541,48 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneWithoutGalleryPhotosNestedInput
   }
 
   export type GalleryUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GalleryUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GalleryCreateManyTournamentInput = {
+    id?: string
+    imageUrl: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type GalleryUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: usersUpdateOneRequiredWithoutGalleryPhotosNestedInput
+  }
+
+  export type GalleryUncheckedUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GalleryUncheckedUpdateManyWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

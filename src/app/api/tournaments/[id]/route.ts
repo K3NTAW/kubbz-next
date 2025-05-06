@@ -11,12 +11,22 @@ const prisma = new PrismaClient();
 //   date: z.string().optional(),
 // });
 
+type TournamentUpdateBody = {
+  title?: string;
+  name?: string;
+  date?: string;
+  description?: string;
+  googleMapsUrl?: string;
+  price?: string;
+  maxPeople?: string;
+  registeredPeople?: string;
+};
+
 export async function DELETE(
   req: NextRequest,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params;
+  const { id } = await context.params;
   try {
     await prisma.tournament.delete({ where: { id } });
     return NextResponse.json({ success: true });
@@ -30,15 +40,31 @@ export async function DELETE(
 
 export async function PUT(
   req: NextRequest,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params;
+  const { id } = await context.params;
   try {
-    const body = await req.json();
-    // const data = TournamentUpdateSchema.parse(body); // Use if validating
-    const data = body; // Use this if not validating
-
+    const body: TournamentUpdateBody = await req.json();
+    const {
+      title,
+      name,
+      date,
+      description,
+      googleMapsUrl,
+      price,
+      maxPeople,
+      registeredPeople
+    } = body;
+    const data: Record<string, unknown> = {
+      ...(title !== undefined && { title }),
+      ...(name !== undefined && { name }),
+      ...(date !== undefined && { date: new Date(date) }),
+      ...(description !== undefined && { description }),
+      ...(googleMapsUrl !== undefined && { googleMapsUrl }),
+      ...(price !== undefined && { price: price ? parseFloat(price) : null }),
+      ...(maxPeople !== undefined && { maxPeople: maxPeople ? parseInt(maxPeople, 10) : undefined }),
+      ...(registeredPeople !== undefined && { registeredPeople: registeredPeople ? parseInt(registeredPeople, 10) : undefined }),
+    };
     const tournament = await prisma.tournament.update({
       where: { id },
       data,
@@ -47,6 +73,25 @@ export async function PUT(
   } catch {
     return NextResponse.json(
       { error: "Failed to update tournament." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
+  try {
+    const tournament = await prisma.tournament.findUnique({ where: { id } });
+    if (!tournament) {
+      return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
+    }
+    return NextResponse.json(tournament);
+  } catch {
+    return NextResponse.json(
+      { error: "Fehler beim Laden des Turniers." },
       { status: 500 }
     );
   }

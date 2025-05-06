@@ -169,8 +169,13 @@ exports.Prisma.Verification_tokensScalarFieldEnum = {
 
 exports.Prisma.TournamentScalarFieldEnum = {
   id: 'id',
+  title: 'title',
   name: 'name',
   description: 'description',
+  googleMapsUrl: 'googleMapsUrl',
+  price: 'price',
+  maxPeople: 'maxPeople',
+  registeredPeople: 'registeredPeople',
   date: 'date',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -181,6 +186,7 @@ exports.Prisma.GalleryScalarFieldEnum = {
   id: 'id',
   imageUrl: 'imageUrl',
   userId: 'userId',
+  tournamentId: 'tournamentId',
   createdAt: 'createdAt'
 };
 

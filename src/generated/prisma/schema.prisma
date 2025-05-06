@@ -69,20 +69,28 @@ model verification_tokens {
 }
 
 model Tournament {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  date        DateTime
-  createdBy   String
-  creator     users    @relation("UserTournaments", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String    @id @default(uuid())
+  title            String
+  name             String
+  description      String?
+  googleMapsUrl    String?
+  price            Float?
+  maxPeople        Int
+  registeredPeople Int       @default(0)
+  date             DateTime
+  createdBy        String
+  creator          users     @relation("UserTournaments", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  galleryPhotos    Gallery[]
 }
 
 model Gallery {
-  id        String   @id @default(uuid())
-  imageUrl  String
-  userId    String
-  user      users    @relation("UserGalleryPhotos", fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id           String      @id @default(uuid())
+  imageUrl     String
+  userId       String
+  user         users       @relation("UserGalleryPhotos", fields: [userId], references: [id], onDelete: Cascade)
+  tournamentId String?
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+  createdAt    DateTime    @default(now())
 }
