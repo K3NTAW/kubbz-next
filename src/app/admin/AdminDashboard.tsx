@@ -96,7 +96,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       email: (data as User).email || "",
       role: (data as User).user_metadata?.role || "user",
     } : {
-      title: (data as Tournament).title || "",
       name: (data as Tournament).name || "",
       date: (data as Tournament).date ? new Date((data as Tournament).date!).toISOString().slice(0, 10) : "",
       description: (data as Tournament).description || "",
@@ -143,6 +142,10 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             name: form.name,
             date: form.date,
             description: form.description,
+            googleMapsUrl: form.googleMapsUrl,
+            price: form.price,
+            maxPeople: form.maxPeople,
+            registeredPeople: form.registeredPeople,
           }),
         });
         if (!res.ok) throw new Error("Failed to update tournament");
@@ -157,7 +160,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     }
   };
   const openCreateModal = () => {
-    setForm({ title: "", name: "", date: "", description: "", googleMapsUrl: "", price: "", maxPeople: "", registeredPeople: "0" });
+    setForm({ name: "", date: "", description: "", googleMapsUrl: "", price: "", maxPeople: "", registeredPeople: "0" });
     setCreateModal(true);
     setError(null);
   };
@@ -175,7 +178,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: form.title,
           name: form.name,
           date: form.date,
           description: form.description,
@@ -339,7 +341,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                 </SheetDescription>
               </SheetHeader>
               <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 p-4">
-                <Input name="title" placeholder="Title" value={form.title || ""} onChange={handleFormChange} required />
                 <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
                 <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
                 <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
@@ -390,7 +391,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
               </>
             ) : (
               <>
-                <Input name="title" placeholder="Title" value={form.title || ""} onChange={handleFormChange} required />
                 <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
                 <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
                 <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />

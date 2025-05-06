@@ -122,28 +122,48 @@ export default function TournamentsListSection({ tournaments }: TournamentsListS
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filtered.map((t) => (
-              <motion.div
-                key={t.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-2 text-sm text-muted-foreground">{format(parseISO(t.date), "dd.MM.yyyy")}</div>
-                    <div className="mb-4 min-h-[48px]">{t.description}</div>
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/tournament/${t.id}`}>Details</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+            {filtered.map((t) => {
+              const registered = parseInt(t.registeredPeople, 10) || 0;
+              const max = parseInt(t.maxPeople, 10) || 0;
+              const isFull = max > 0 && registered >= max;
+              return (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="relative h-full">
+                    <Card className={isFull ? "opacity-60 grayscale pointer-events-none h-full" : "h-full"}>
+                      <CardHeader>
+                        <CardTitle>{t.title || t.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="mb-2 text-sm text-muted-foreground">
+                          {format(parseISO(t.date), "dd.MM.yyyy")}
+                        </div>
+                        <div className="mb-2 text-sm">
+                          <span className="font-medium">Ort:</span> {t.name}
+                        </div>
+                        <div className="mb-4 min-h-[32px] text-muted-foreground">{t.description}</div>
+                        <div className="flex items-center justify-between mt-4">
+                          <Button asChild variant="outline" size="sm" disabled={isFull}>
+                            <Link href={`/tournament/${t.id}`}>Details</Link>
+                          </Button>
+                          <span className={
+                            "ml-2 bg-zinc-900 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10 flex items-center" +
+                            (isFull ? " bg-red-600" : " bg-zinc-900")
+                          }>
+                            {registered}/{max}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </AnimatePresence>

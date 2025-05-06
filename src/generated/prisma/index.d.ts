@@ -48,6 +48,11 @@ export type Tournament = $Result.DefaultSelection<Prisma.$TournamentPayload>
  * 
  */
 export type Gallery = $Result.DefaultSelection<Prisma.$GalleryPayload>
+/**
+ * Model TournamentRegistration
+ * 
+ */
+export type TournamentRegistration = $Result.DefaultSelection<Prisma.$TournamentRegistrationPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -243,6 +248,16 @@ export class PrismaClient<
     * ```
     */
   get gallery(): Prisma.GalleryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tournamentRegistration`: Exposes CRUD operations for the **TournamentRegistration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TournamentRegistrations
+    * const tournamentRegistrations = await prisma.tournamentRegistration.findMany()
+    * ```
+    */
+  get tournamentRegistration(): Prisma.TournamentRegistrationDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -689,7 +704,8 @@ export namespace Prisma {
     users: 'users',
     verification_tokens: 'verification_tokens',
     Tournament: 'Tournament',
-    Gallery: 'Gallery'
+    Gallery: 'Gallery',
+    TournamentRegistration: 'TournamentRegistration'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -708,7 +724,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "accounts" | "profiles" | "sessions" | "users" | "verification_tokens" | "tournament" | "gallery"
+      modelProps: "accounts" | "profiles" | "sessions" | "users" | "verification_tokens" | "tournament" | "gallery" | "tournamentRegistration"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1230,6 +1246,80 @@ export namespace Prisma {
           }
         }
       }
+      TournamentRegistration: {
+        payload: Prisma.$TournamentRegistrationPayload<ExtArgs>
+        fields: Prisma.TournamentRegistrationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TournamentRegistrationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TournamentRegistrationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          findFirst: {
+            args: Prisma.TournamentRegistrationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TournamentRegistrationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          findMany: {
+            args: Prisma.TournamentRegistrationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>[]
+          }
+          create: {
+            args: Prisma.TournamentRegistrationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          createMany: {
+            args: Prisma.TournamentRegistrationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TournamentRegistrationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>[]
+          }
+          delete: {
+            args: Prisma.TournamentRegistrationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          update: {
+            args: Prisma.TournamentRegistrationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          deleteMany: {
+            args: Prisma.TournamentRegistrationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TournamentRegistrationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TournamentRegistrationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>[]
+          }
+          upsert: {
+            args: Prisma.TournamentRegistrationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournamentRegistrationPayload>
+          }
+          aggregate: {
+            args: Prisma.TournamentRegistrationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTournamentRegistration>
+          }
+          groupBy: {
+            args: Prisma.TournamentRegistrationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TournamentRegistrationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TournamentRegistrationCountArgs<ExtArgs>
+            result: $Utils.Optional<TournamentRegistrationCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1321,6 +1411,7 @@ export namespace Prisma {
     verification_tokens?: verification_tokensOmit
     tournament?: TournamentOmit
     gallery?: GalleryOmit
+    tournamentRegistration?: TournamentRegistrationOmit
   }
 
   /* Types for Logging */
@@ -1419,6 +1510,7 @@ export namespace Prisma {
     sessions: number
     tournaments: number
     galleryPhotos: number
+    registrations: number
   }
 
   export type UsersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1426,6 +1518,7 @@ export namespace Prisma {
     sessions?: boolean | UsersCountOutputTypeCountSessionsArgs
     tournaments?: boolean | UsersCountOutputTypeCountTournamentsArgs
     galleryPhotos?: boolean | UsersCountOutputTypeCountGalleryPhotosArgs
+    registrations?: boolean | UsersCountOutputTypeCountRegistrationsArgs
   }
 
   // Custom InputTypes
@@ -1467,6 +1560,13 @@ export namespace Prisma {
     where?: GalleryWhereInput
   }
 
+  /**
+   * UsersCountOutputType without action
+   */
+  export type UsersCountOutputTypeCountRegistrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TournamentRegistrationWhereInput
+  }
+
 
   /**
    * Count Type TournamentCountOutputType
@@ -1474,10 +1574,12 @@ export namespace Prisma {
 
   export type TournamentCountOutputType = {
     galleryPhotos: number
+    registrations: number
   }
 
   export type TournamentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     galleryPhotos?: boolean | TournamentCountOutputTypeCountGalleryPhotosArgs
+    registrations?: boolean | TournamentCountOutputTypeCountRegistrationsArgs
   }
 
   // Custom InputTypes
@@ -1496,6 +1598,13 @@ export namespace Prisma {
    */
   export type TournamentCountOutputTypeCountGalleryPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GalleryWhereInput
+  }
+
+  /**
+   * TournamentCountOutputType without action
+   */
+  export type TournamentCountOutputTypeCountRegistrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TournamentRegistrationWhereInput
   }
 
 
@@ -4983,6 +5092,7 @@ export namespace Prisma {
     sessions?: boolean | users$sessionsArgs<ExtArgs>
     tournaments?: boolean | users$tournamentsArgs<ExtArgs>
     galleryPhotos?: boolean | users$galleryPhotosArgs<ExtArgs>
+    registrations?: boolean | users$registrationsArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
@@ -5023,6 +5133,7 @@ export namespace Prisma {
     sessions?: boolean | users$sessionsArgs<ExtArgs>
     tournaments?: boolean | users$tournamentsArgs<ExtArgs>
     galleryPhotos?: boolean | users$galleryPhotosArgs<ExtArgs>
+    registrations?: boolean | users$registrationsArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type usersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5036,6 +5147,7 @@ export namespace Prisma {
       sessions: Prisma.$sessionsPayload<ExtArgs>[]
       tournaments: Prisma.$TournamentPayload<ExtArgs>[]
       galleryPhotos: Prisma.$GalleryPayload<ExtArgs>[]
+      registrations: Prisma.$TournamentRegistrationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5444,6 +5556,7 @@ export namespace Prisma {
     sessions<T extends users$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, users$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tournaments<T extends users$tournamentsArgs<ExtArgs> = {}>(args?: Subset<T, users$tournamentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     galleryPhotos<T extends users$galleryPhotosArgs<ExtArgs> = {}>(args?: Subset<T, users$galleryPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GalleryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    registrations<T extends users$registrationsArgs<ExtArgs> = {}>(args?: Subset<T, users$registrationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5980,6 +6093,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: GalleryScalarFieldEnum | GalleryScalarFieldEnum[]
+  }
+
+  /**
+   * users.registrations
+   */
+  export type users$registrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    where?: TournamentRegistrationWhereInput
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    cursor?: TournamentRegistrationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TournamentRegistrationScalarFieldEnum | TournamentRegistrationScalarFieldEnum[]
   }
 
   /**
@@ -7234,6 +7371,7 @@ export namespace Prisma {
     updatedAt?: boolean
     creator?: boolean | usersDefaultArgs<ExtArgs>
     galleryPhotos?: boolean | Tournament$galleryPhotosArgs<ExtArgs>
+    registrations?: boolean | Tournament$registrationsArgs<ExtArgs>
     _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tournament"]>
 
@@ -7288,6 +7426,7 @@ export namespace Prisma {
   export type TournamentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
     galleryPhotos?: boolean | Tournament$galleryPhotosArgs<ExtArgs>
+    registrations?: boolean | Tournament$registrationsArgs<ExtArgs>
     _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TournamentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7302,6 +7441,7 @@ export namespace Prisma {
     objects: {
       creator: Prisma.$usersPayload<ExtArgs>
       galleryPhotos: Prisma.$GalleryPayload<ExtArgs>[]
+      registrations: Prisma.$TournamentRegistrationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7712,6 +7852,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     creator<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     galleryPhotos<T extends Tournament$galleryPhotosArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$galleryPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GalleryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    registrations<T extends Tournament$registrationsArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$registrationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8170,6 +8311,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: GalleryScalarFieldEnum | GalleryScalarFieldEnum[]
+  }
+
+  /**
+   * Tournament.registrations
+   */
+  export type Tournament$registrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    where?: TournamentRegistrationWhereInput
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    cursor?: TournamentRegistrationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TournamentRegistrationScalarFieldEnum | TournamentRegistrationScalarFieldEnum[]
   }
 
   /**
@@ -9277,6 +9442,1072 @@ export namespace Prisma {
 
 
   /**
+   * Model TournamentRegistration
+   */
+
+  export type AggregateTournamentRegistration = {
+    _count: TournamentRegistrationCountAggregateOutputType | null
+    _min: TournamentRegistrationMinAggregateOutputType | null
+    _max: TournamentRegistrationMaxAggregateOutputType | null
+  }
+
+  export type TournamentRegistrationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    tournamentId: string | null
+    name: string | null
+    createdAt: Date | null
+  }
+
+  export type TournamentRegistrationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    tournamentId: string | null
+    name: string | null
+    createdAt: Date | null
+  }
+
+  export type TournamentRegistrationCountAggregateOutputType = {
+    id: number
+    userId: number
+    tournamentId: number
+    name: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TournamentRegistrationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    tournamentId?: true
+    name?: true
+    createdAt?: true
+  }
+
+  export type TournamentRegistrationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    tournamentId?: true
+    name?: true
+    createdAt?: true
+  }
+
+  export type TournamentRegistrationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    tournamentId?: true
+    name?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TournamentRegistrationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TournamentRegistration to aggregate.
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournamentRegistrations to fetch.
+     */
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TournamentRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournamentRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournamentRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TournamentRegistrations
+    **/
+    _count?: true | TournamentRegistrationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TournamentRegistrationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TournamentRegistrationMaxAggregateInputType
+  }
+
+  export type GetTournamentRegistrationAggregateType<T extends TournamentRegistrationAggregateArgs> = {
+        [P in keyof T & keyof AggregateTournamentRegistration]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTournamentRegistration[P]>
+      : GetScalarType<T[P], AggregateTournamentRegistration[P]>
+  }
+
+
+
+
+  export type TournamentRegistrationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TournamentRegistrationWhereInput
+    orderBy?: TournamentRegistrationOrderByWithAggregationInput | TournamentRegistrationOrderByWithAggregationInput[]
+    by: TournamentRegistrationScalarFieldEnum[] | TournamentRegistrationScalarFieldEnum
+    having?: TournamentRegistrationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TournamentRegistrationCountAggregateInputType | true
+    _min?: TournamentRegistrationMinAggregateInputType
+    _max?: TournamentRegistrationMaxAggregateInputType
+  }
+
+  export type TournamentRegistrationGroupByOutputType = {
+    id: string
+    userId: string
+    tournamentId: string
+    name: string | null
+    createdAt: Date
+    _count: TournamentRegistrationCountAggregateOutputType | null
+    _min: TournamentRegistrationMinAggregateOutputType | null
+    _max: TournamentRegistrationMaxAggregateOutputType | null
+  }
+
+  type GetTournamentRegistrationGroupByPayload<T extends TournamentRegistrationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TournamentRegistrationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TournamentRegistrationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TournamentRegistrationGroupByOutputType[P]>
+            : GetScalarType<T[P], TournamentRegistrationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TournamentRegistrationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    createdAt?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tournamentRegistration"]>
+
+  export type TournamentRegistrationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    createdAt?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tournamentRegistration"]>
+
+  export type TournamentRegistrationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    createdAt?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tournamentRegistration"]>
+
+  export type TournamentRegistrationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    createdAt?: boolean
+  }
+
+  export type TournamentRegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "tournamentId" | "name" | "createdAt", ExtArgs["result"]["tournamentRegistration"]>
+  export type TournamentRegistrationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }
+  export type TournamentRegistrationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }
+  export type TournamentRegistrationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }
+
+  export type $TournamentRegistrationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TournamentRegistration"
+    objects: {
+      user: Prisma.$usersPayload<ExtArgs>
+      tournament: Prisma.$TournamentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      tournamentId: string
+      name: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["tournamentRegistration"]>
+    composites: {}
+  }
+
+  type TournamentRegistrationGetPayload<S extends boolean | null | undefined | TournamentRegistrationDefaultArgs> = $Result.GetResult<Prisma.$TournamentRegistrationPayload, S>
+
+  type TournamentRegistrationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TournamentRegistrationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TournamentRegistrationCountAggregateInputType | true
+    }
+
+  export interface TournamentRegistrationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TournamentRegistration'], meta: { name: 'TournamentRegistration' } }
+    /**
+     * Find zero or one TournamentRegistration that matches the filter.
+     * @param {TournamentRegistrationFindUniqueArgs} args - Arguments to find a TournamentRegistration
+     * @example
+     * // Get one TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TournamentRegistrationFindUniqueArgs>(args: SelectSubset<T, TournamentRegistrationFindUniqueArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TournamentRegistration that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TournamentRegistrationFindUniqueOrThrowArgs} args - Arguments to find a TournamentRegistration
+     * @example
+     * // Get one TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TournamentRegistrationFindUniqueOrThrowArgs>(args: SelectSubset<T, TournamentRegistrationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TournamentRegistration that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationFindFirstArgs} args - Arguments to find a TournamentRegistration
+     * @example
+     * // Get one TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TournamentRegistrationFindFirstArgs>(args?: SelectSubset<T, TournamentRegistrationFindFirstArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TournamentRegistration that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationFindFirstOrThrowArgs} args - Arguments to find a TournamentRegistration
+     * @example
+     * // Get one TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TournamentRegistrationFindFirstOrThrowArgs>(args?: SelectSubset<T, TournamentRegistrationFindFirstOrThrowArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TournamentRegistrations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TournamentRegistrations
+     * const tournamentRegistrations = await prisma.tournamentRegistration.findMany()
+     * 
+     * // Get first 10 TournamentRegistrations
+     * const tournamentRegistrations = await prisma.tournamentRegistration.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tournamentRegistrationWithIdOnly = await prisma.tournamentRegistration.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TournamentRegistrationFindManyArgs>(args?: SelectSubset<T, TournamentRegistrationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TournamentRegistration.
+     * @param {TournamentRegistrationCreateArgs} args - Arguments to create a TournamentRegistration.
+     * @example
+     * // Create one TournamentRegistration
+     * const TournamentRegistration = await prisma.tournamentRegistration.create({
+     *   data: {
+     *     // ... data to create a TournamentRegistration
+     *   }
+     * })
+     * 
+     */
+    create<T extends TournamentRegistrationCreateArgs>(args: SelectSubset<T, TournamentRegistrationCreateArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TournamentRegistrations.
+     * @param {TournamentRegistrationCreateManyArgs} args - Arguments to create many TournamentRegistrations.
+     * @example
+     * // Create many TournamentRegistrations
+     * const tournamentRegistration = await prisma.tournamentRegistration.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TournamentRegistrationCreateManyArgs>(args?: SelectSubset<T, TournamentRegistrationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TournamentRegistrations and returns the data saved in the database.
+     * @param {TournamentRegistrationCreateManyAndReturnArgs} args - Arguments to create many TournamentRegistrations.
+     * @example
+     * // Create many TournamentRegistrations
+     * const tournamentRegistration = await prisma.tournamentRegistration.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TournamentRegistrations and only return the `id`
+     * const tournamentRegistrationWithIdOnly = await prisma.tournamentRegistration.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TournamentRegistrationCreateManyAndReturnArgs>(args?: SelectSubset<T, TournamentRegistrationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TournamentRegistration.
+     * @param {TournamentRegistrationDeleteArgs} args - Arguments to delete one TournamentRegistration.
+     * @example
+     * // Delete one TournamentRegistration
+     * const TournamentRegistration = await prisma.tournamentRegistration.delete({
+     *   where: {
+     *     // ... filter to delete one TournamentRegistration
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TournamentRegistrationDeleteArgs>(args: SelectSubset<T, TournamentRegistrationDeleteArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TournamentRegistration.
+     * @param {TournamentRegistrationUpdateArgs} args - Arguments to update one TournamentRegistration.
+     * @example
+     * // Update one TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TournamentRegistrationUpdateArgs>(args: SelectSubset<T, TournamentRegistrationUpdateArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TournamentRegistrations.
+     * @param {TournamentRegistrationDeleteManyArgs} args - Arguments to filter TournamentRegistrations to delete.
+     * @example
+     * // Delete a few TournamentRegistrations
+     * const { count } = await prisma.tournamentRegistration.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TournamentRegistrationDeleteManyArgs>(args?: SelectSubset<T, TournamentRegistrationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TournamentRegistrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TournamentRegistrations
+     * const tournamentRegistration = await prisma.tournamentRegistration.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TournamentRegistrationUpdateManyArgs>(args: SelectSubset<T, TournamentRegistrationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TournamentRegistrations and returns the data updated in the database.
+     * @param {TournamentRegistrationUpdateManyAndReturnArgs} args - Arguments to update many TournamentRegistrations.
+     * @example
+     * // Update many TournamentRegistrations
+     * const tournamentRegistration = await prisma.tournamentRegistration.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TournamentRegistrations and only return the `id`
+     * const tournamentRegistrationWithIdOnly = await prisma.tournamentRegistration.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TournamentRegistrationUpdateManyAndReturnArgs>(args: SelectSubset<T, TournamentRegistrationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TournamentRegistration.
+     * @param {TournamentRegistrationUpsertArgs} args - Arguments to update or create a TournamentRegistration.
+     * @example
+     * // Update or create a TournamentRegistration
+     * const tournamentRegistration = await prisma.tournamentRegistration.upsert({
+     *   create: {
+     *     // ... data to create a TournamentRegistration
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TournamentRegistration we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TournamentRegistrationUpsertArgs>(args: SelectSubset<T, TournamentRegistrationUpsertArgs<ExtArgs>>): Prisma__TournamentRegistrationClient<$Result.GetResult<Prisma.$TournamentRegistrationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TournamentRegistrations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationCountArgs} args - Arguments to filter TournamentRegistrations to count.
+     * @example
+     * // Count the number of TournamentRegistrations
+     * const count = await prisma.tournamentRegistration.count({
+     *   where: {
+     *     // ... the filter for the TournamentRegistrations we want to count
+     *   }
+     * })
+    **/
+    count<T extends TournamentRegistrationCountArgs>(
+      args?: Subset<T, TournamentRegistrationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TournamentRegistrationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TournamentRegistration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TournamentRegistrationAggregateArgs>(args: Subset<T, TournamentRegistrationAggregateArgs>): Prisma.PrismaPromise<GetTournamentRegistrationAggregateType<T>>
+
+    /**
+     * Group by TournamentRegistration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournamentRegistrationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TournamentRegistrationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TournamentRegistrationGroupByArgs['orderBy'] }
+        : { orderBy?: TournamentRegistrationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TournamentRegistrationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTournamentRegistrationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TournamentRegistration model
+   */
+  readonly fields: TournamentRegistrationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TournamentRegistration.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TournamentRegistrationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    tournament<T extends TournamentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TournamentDefaultArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TournamentRegistration model
+   */
+  interface TournamentRegistrationFieldRefs {
+    readonly id: FieldRef<"TournamentRegistration", 'String'>
+    readonly userId: FieldRef<"TournamentRegistration", 'String'>
+    readonly tournamentId: FieldRef<"TournamentRegistration", 'String'>
+    readonly name: FieldRef<"TournamentRegistration", 'String'>
+    readonly createdAt: FieldRef<"TournamentRegistration", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TournamentRegistration findUnique
+   */
+  export type TournamentRegistrationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter, which TournamentRegistration to fetch.
+     */
+    where: TournamentRegistrationWhereUniqueInput
+  }
+
+  /**
+   * TournamentRegistration findUniqueOrThrow
+   */
+  export type TournamentRegistrationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter, which TournamentRegistration to fetch.
+     */
+    where: TournamentRegistrationWhereUniqueInput
+  }
+
+  /**
+   * TournamentRegistration findFirst
+   */
+  export type TournamentRegistrationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter, which TournamentRegistration to fetch.
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournamentRegistrations to fetch.
+     */
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TournamentRegistrations.
+     */
+    cursor?: TournamentRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournamentRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournamentRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TournamentRegistrations.
+     */
+    distinct?: TournamentRegistrationScalarFieldEnum | TournamentRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * TournamentRegistration findFirstOrThrow
+   */
+  export type TournamentRegistrationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter, which TournamentRegistration to fetch.
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournamentRegistrations to fetch.
+     */
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TournamentRegistrations.
+     */
+    cursor?: TournamentRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournamentRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournamentRegistrations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TournamentRegistrations.
+     */
+    distinct?: TournamentRegistrationScalarFieldEnum | TournamentRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * TournamentRegistration findMany
+   */
+  export type TournamentRegistrationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter, which TournamentRegistrations to fetch.
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournamentRegistrations to fetch.
+     */
+    orderBy?: TournamentRegistrationOrderByWithRelationInput | TournamentRegistrationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TournamentRegistrations.
+     */
+    cursor?: TournamentRegistrationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournamentRegistrations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournamentRegistrations.
+     */
+    skip?: number
+    distinct?: TournamentRegistrationScalarFieldEnum | TournamentRegistrationScalarFieldEnum[]
+  }
+
+  /**
+   * TournamentRegistration create
+   */
+  export type TournamentRegistrationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TournamentRegistration.
+     */
+    data: XOR<TournamentRegistrationCreateInput, TournamentRegistrationUncheckedCreateInput>
+  }
+
+  /**
+   * TournamentRegistration createMany
+   */
+  export type TournamentRegistrationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TournamentRegistrations.
+     */
+    data: TournamentRegistrationCreateManyInput | TournamentRegistrationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TournamentRegistration createManyAndReturn
+   */
+  export type TournamentRegistrationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * The data used to create many TournamentRegistrations.
+     */
+    data: TournamentRegistrationCreateManyInput | TournamentRegistrationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TournamentRegistration update
+   */
+  export type TournamentRegistrationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TournamentRegistration.
+     */
+    data: XOR<TournamentRegistrationUpdateInput, TournamentRegistrationUncheckedUpdateInput>
+    /**
+     * Choose, which TournamentRegistration to update.
+     */
+    where: TournamentRegistrationWhereUniqueInput
+  }
+
+  /**
+   * TournamentRegistration updateMany
+   */
+  export type TournamentRegistrationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TournamentRegistrations.
+     */
+    data: XOR<TournamentRegistrationUpdateManyMutationInput, TournamentRegistrationUncheckedUpdateManyInput>
+    /**
+     * Filter which TournamentRegistrations to update
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * Limit how many TournamentRegistrations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TournamentRegistration updateManyAndReturn
+   */
+  export type TournamentRegistrationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * The data used to update TournamentRegistrations.
+     */
+    data: XOR<TournamentRegistrationUpdateManyMutationInput, TournamentRegistrationUncheckedUpdateManyInput>
+    /**
+     * Filter which TournamentRegistrations to update
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * Limit how many TournamentRegistrations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TournamentRegistration upsert
+   */
+  export type TournamentRegistrationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TournamentRegistration to update in case it exists.
+     */
+    where: TournamentRegistrationWhereUniqueInput
+    /**
+     * In case the TournamentRegistration found by the `where` argument doesn't exist, create a new TournamentRegistration with this data.
+     */
+    create: XOR<TournamentRegistrationCreateInput, TournamentRegistrationUncheckedCreateInput>
+    /**
+     * In case the TournamentRegistration was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TournamentRegistrationUpdateInput, TournamentRegistrationUncheckedUpdateInput>
+  }
+
+  /**
+   * TournamentRegistration delete
+   */
+  export type TournamentRegistrationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+    /**
+     * Filter which TournamentRegistration to delete.
+     */
+    where: TournamentRegistrationWhereUniqueInput
+  }
+
+  /**
+   * TournamentRegistration deleteMany
+   */
+  export type TournamentRegistrationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TournamentRegistrations to delete
+     */
+    where?: TournamentRegistrationWhereInput
+    /**
+     * Limit how many TournamentRegistrations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TournamentRegistration without action
+   */
+  export type TournamentRegistrationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournamentRegistration
+     */
+    select?: TournamentRegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TournamentRegistration
+     */
+    omit?: TournamentRegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TournamentRegistrationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9379,6 +10610,17 @@ export namespace Prisma {
   };
 
   export type GalleryScalarFieldEnum = (typeof GalleryScalarFieldEnum)[keyof typeof GalleryScalarFieldEnum]
+
+
+  export const TournamentRegistrationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    tournamentId: 'tournamentId',
+    name: 'name',
+    createdAt: 'createdAt'
+  };
+
+  export type TournamentRegistrationScalarFieldEnum = (typeof TournamentRegistrationScalarFieldEnum)[keyof typeof TournamentRegistrationScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9719,6 +10961,7 @@ export namespace Prisma {
     sessions?: SessionsListRelationFilter
     tournaments?: TournamentListRelationFilter
     galleryPhotos?: GalleryListRelationFilter
+    registrations?: TournamentRegistrationListRelationFilter
   }
 
   export type usersOrderByWithRelationInput = {
@@ -9734,6 +10977,7 @@ export namespace Prisma {
     sessions?: sessionsOrderByRelationAggregateInput
     tournaments?: TournamentOrderByRelationAggregateInput
     galleryPhotos?: GalleryOrderByRelationAggregateInput
+    registrations?: TournamentRegistrationOrderByRelationAggregateInput
   }
 
   export type usersWhereUniqueInput = Prisma.AtLeast<{
@@ -9752,6 +10996,7 @@ export namespace Prisma {
     sessions?: SessionsListRelationFilter
     tournaments?: TournamentListRelationFilter
     galleryPhotos?: GalleryListRelationFilter
+    registrations?: TournamentRegistrationListRelationFilter
   }, "id" | "email">
 
   export type usersOrderByWithAggregationInput = {
@@ -9841,6 +11086,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
     galleryPhotos?: GalleryListRelationFilter
+    registrations?: TournamentRegistrationListRelationFilter
   }
 
   export type TournamentOrderByWithRelationInput = {
@@ -9858,6 +11104,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     creator?: usersOrderByWithRelationInput
     galleryPhotos?: GalleryOrderByRelationAggregateInput
+    registrations?: TournamentRegistrationOrderByRelationAggregateInput
   }
 
   export type TournamentWhereUniqueInput = Prisma.AtLeast<{
@@ -9878,6 +11125,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
     galleryPhotos?: GalleryListRelationFilter
+    registrations?: TournamentRegistrationListRelationFilter
   }, "id">
 
   export type TournamentOrderByWithAggregationInput = {
@@ -9974,6 +11222,65 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Gallery"> | string
     tournamentId?: StringNullableWithAggregatesFilter<"Gallery"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Gallery"> | Date | string
+  }
+
+  export type TournamentRegistrationWhereInput = {
+    AND?: TournamentRegistrationWhereInput | TournamentRegistrationWhereInput[]
+    OR?: TournamentRegistrationWhereInput[]
+    NOT?: TournamentRegistrationWhereInput | TournamentRegistrationWhereInput[]
+    id?: StringFilter<"TournamentRegistration"> | string
+    userId?: StringFilter<"TournamentRegistration"> | string
+    tournamentId?: StringFilter<"TournamentRegistration"> | string
+    name?: StringNullableFilter<"TournamentRegistration"> | string | null
+    createdAt?: DateTimeFilter<"TournamentRegistration"> | Date | string
+    user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
+  }
+
+  export type TournamentRegistrationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: usersOrderByWithRelationInput
+    tournament?: TournamentOrderByWithRelationInput
+  }
+
+  export type TournamentRegistrationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_tournamentId?: TournamentRegistrationUserIdTournamentIdCompoundUniqueInput
+    AND?: TournamentRegistrationWhereInput | TournamentRegistrationWhereInput[]
+    OR?: TournamentRegistrationWhereInput[]
+    NOT?: TournamentRegistrationWhereInput | TournamentRegistrationWhereInput[]
+    userId?: StringFilter<"TournamentRegistration"> | string
+    tournamentId?: StringFilter<"TournamentRegistration"> | string
+    name?: StringNullableFilter<"TournamentRegistration"> | string | null
+    createdAt?: DateTimeFilter<"TournamentRegistration"> | Date | string
+    user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
+  }, "id" | "userId_tournamentId">
+
+  export type TournamentRegistrationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TournamentRegistrationCountOrderByAggregateInput
+    _max?: TournamentRegistrationMaxOrderByAggregateInput
+    _min?: TournamentRegistrationMinOrderByAggregateInput
+  }
+
+  export type TournamentRegistrationScalarWhereWithAggregatesInput = {
+    AND?: TournamentRegistrationScalarWhereWithAggregatesInput | TournamentRegistrationScalarWhereWithAggregatesInput[]
+    OR?: TournamentRegistrationScalarWhereWithAggregatesInput[]
+    NOT?: TournamentRegistrationScalarWhereWithAggregatesInput | TournamentRegistrationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TournamentRegistration"> | string
+    userId?: StringWithAggregatesFilter<"TournamentRegistration"> | string
+    tournamentId?: StringWithAggregatesFilter<"TournamentRegistration"> | string
+    name?: StringNullableWithAggregatesFilter<"TournamentRegistration"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TournamentRegistration"> | Date | string
   }
 
   export type accountsCreateInput = {
@@ -10203,6 +11510,7 @@ export namespace Prisma {
     sessions?: sessionsCreateNestedManyWithoutUsersInput
     tournaments?: TournamentCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateInput = {
@@ -10218,6 +11526,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
     tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersUpdateInput = {
@@ -10233,6 +11542,7 @@ export namespace Prisma {
     sessions?: sessionsUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateInput = {
@@ -10248,6 +11558,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateManyInput = {
@@ -10336,6 +11647,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     creator: usersCreateNestedOneWithoutTournamentsInput
     galleryPhotos?: GalleryCreateNestedManyWithoutTournamentInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateInput = {
@@ -10352,6 +11664,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutTournamentInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUpdateInput = {
@@ -10368,6 +11681,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: usersUpdateOneRequiredWithoutTournamentsNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutTournamentNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateInput = {
@@ -10384,6 +11698,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutTournamentNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentCreateManyInput = {
@@ -10481,6 +11796,60 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationCreateInput = {
+    id?: string
+    name?: string | null
+    createdAt?: Date | string
+    user: usersCreateNestedOneWithoutRegistrationsInput
+    tournament: TournamentCreateNestedOneWithoutRegistrationsInput
+  }
+
+  export type TournamentRegistrationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    tournamentId: string
+    name?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: usersUpdateOneRequiredWithoutRegistrationsNestedInput
+    tournament?: TournamentUpdateOneRequiredWithoutRegistrationsNestedInput
+  }
+
+  export type TournamentRegistrationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationCreateManyInput = {
+    id?: string
+    userId: string
+    tournamentId: string
+    name?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10781,6 +12150,12 @@ export namespace Prisma {
     none?: GalleryWhereInput
   }
 
+  export type TournamentRegistrationListRelationFilter = {
+    every?: TournamentRegistrationWhereInput
+    some?: TournamentRegistrationWhereInput
+    none?: TournamentRegistrationWhereInput
+  }
+
   export type accountsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10794,6 +12169,10 @@ export namespace Prisma {
   }
 
   export type GalleryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TournamentRegistrationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11028,6 +12407,40 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type TournamentScalarRelationFilter = {
+    is?: TournamentWhereInput
+    isNot?: TournamentWhereInput
+  }
+
+  export type TournamentRegistrationUserIdTournamentIdCompoundUniqueInput = {
+    userId: string
+    tournamentId: string
+  }
+
+  export type TournamentRegistrationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TournamentRegistrationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TournamentRegistrationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type usersCreateNestedOneWithoutAccountsInput = {
     create?: XOR<usersCreateWithoutAccountsInput, usersUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: usersCreateOrConnectWithoutAccountsInput
@@ -11124,6 +12537,13 @@ export namespace Prisma {
     connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
   }
 
+  export type TournamentRegistrationCreateNestedManyWithoutUserInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput> | TournamentRegistrationCreateWithoutUserInput[] | TournamentRegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutUserInput | TournamentRegistrationCreateOrConnectWithoutUserInput[]
+    createMany?: TournamentRegistrationCreateManyUserInputEnvelope
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+  }
+
   export type accountsUncheckedCreateNestedManyWithoutUsersInput = {
     create?: XOR<accountsCreateWithoutUsersInput, accountsUncheckedCreateWithoutUsersInput> | accountsCreateWithoutUsersInput[] | accountsUncheckedCreateWithoutUsersInput[]
     connectOrCreate?: accountsCreateOrConnectWithoutUsersInput | accountsCreateOrConnectWithoutUsersInput[]
@@ -11156,6 +12576,13 @@ export namespace Prisma {
     connectOrCreate?: GalleryCreateOrConnectWithoutUserInput | GalleryCreateOrConnectWithoutUserInput[]
     createMany?: GalleryCreateManyUserInputEnvelope
     connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+  }
+
+  export type TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput> | TournamentRegistrationCreateWithoutUserInput[] | TournamentRegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutUserInput | TournamentRegistrationCreateOrConnectWithoutUserInput[]
+    createMany?: TournamentRegistrationCreateManyUserInputEnvelope
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -11228,6 +12655,20 @@ export namespace Prisma {
     deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
   }
 
+  export type TournamentRegistrationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput> | TournamentRegistrationCreateWithoutUserInput[] | TournamentRegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutUserInput | TournamentRegistrationCreateOrConnectWithoutUserInput[]
+    upsert?: TournamentRegistrationUpsertWithWhereUniqueWithoutUserInput | TournamentRegistrationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TournamentRegistrationCreateManyUserInputEnvelope
+    set?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    disconnect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    delete?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    update?: TournamentRegistrationUpdateWithWhereUniqueWithoutUserInput | TournamentRegistrationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TournamentRegistrationUpdateManyWithWhereWithoutUserInput | TournamentRegistrationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
+  }
+
   export type accountsUncheckedUpdateManyWithoutUsersNestedInput = {
     create?: XOR<accountsCreateWithoutUsersInput, accountsUncheckedCreateWithoutUsersInput> | accountsCreateWithoutUsersInput[] | accountsUncheckedCreateWithoutUsersInput[]
     connectOrCreate?: accountsCreateOrConnectWithoutUsersInput | accountsCreateOrConnectWithoutUsersInput[]
@@ -11294,6 +12735,20 @@ export namespace Prisma {
     deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
   }
 
+  export type TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput> | TournamentRegistrationCreateWithoutUserInput[] | TournamentRegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutUserInput | TournamentRegistrationCreateOrConnectWithoutUserInput[]
+    upsert?: TournamentRegistrationUpsertWithWhereUniqueWithoutUserInput | TournamentRegistrationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: TournamentRegistrationCreateManyUserInputEnvelope
+    set?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    disconnect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    delete?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    update?: TournamentRegistrationUpdateWithWhereUniqueWithoutUserInput | TournamentRegistrationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: TournamentRegistrationUpdateManyWithWhereWithoutUserInput | TournamentRegistrationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
+  }
+
   export type usersCreateNestedOneWithoutTournamentsInput = {
     create?: XOR<usersCreateWithoutTournamentsInput, usersUncheckedCreateWithoutTournamentsInput>
     connectOrCreate?: usersCreateOrConnectWithoutTournamentsInput
@@ -11307,11 +12762,25 @@ export namespace Prisma {
     connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
   }
 
+  export type TournamentRegistrationCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput> | TournamentRegistrationCreateWithoutTournamentInput[] | TournamentRegistrationUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutTournamentInput | TournamentRegistrationCreateOrConnectWithoutTournamentInput[]
+    createMany?: TournamentRegistrationCreateManyTournamentInputEnvelope
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+  }
+
   export type GalleryUncheckedCreateNestedManyWithoutTournamentInput = {
     create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
     connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
     createMany?: GalleryCreateManyTournamentInputEnvelope
     connect?: GalleryWhereUniqueInput | GalleryWhereUniqueInput[]
+  }
+
+  export type TournamentRegistrationUncheckedCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput> | TournamentRegistrationCreateWithoutTournamentInput[] | TournamentRegistrationUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutTournamentInput | TournamentRegistrationCreateOrConnectWithoutTournamentInput[]
+    createMany?: TournamentRegistrationCreateManyTournamentInputEnvelope
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
   }
 
   export type NullableFloatFieldUpdateOperationsInput = {
@@ -11352,6 +12821,20 @@ export namespace Prisma {
     deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
   }
 
+  export type TournamentRegistrationUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput> | TournamentRegistrationCreateWithoutTournamentInput[] | TournamentRegistrationUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutTournamentInput | TournamentRegistrationCreateOrConnectWithoutTournamentInput[]
+    upsert?: TournamentRegistrationUpsertWithWhereUniqueWithoutTournamentInput | TournamentRegistrationUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: TournamentRegistrationCreateManyTournamentInputEnvelope
+    set?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    disconnect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    delete?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    update?: TournamentRegistrationUpdateWithWhereUniqueWithoutTournamentInput | TournamentRegistrationUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: TournamentRegistrationUpdateManyWithWhereWithoutTournamentInput | TournamentRegistrationUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
+  }
+
   export type GalleryUncheckedUpdateManyWithoutTournamentNestedInput = {
     create?: XOR<GalleryCreateWithoutTournamentInput, GalleryUncheckedCreateWithoutTournamentInput> | GalleryCreateWithoutTournamentInput[] | GalleryUncheckedCreateWithoutTournamentInput[]
     connectOrCreate?: GalleryCreateOrConnectWithoutTournamentInput | GalleryCreateOrConnectWithoutTournamentInput[]
@@ -11364,6 +12847,20 @@ export namespace Prisma {
     update?: GalleryUpdateWithWhereUniqueWithoutTournamentInput | GalleryUpdateWithWhereUniqueWithoutTournamentInput[]
     updateMany?: GalleryUpdateManyWithWhereWithoutTournamentInput | GalleryUpdateManyWithWhereWithoutTournamentInput[]
     deleteMany?: GalleryScalarWhereInput | GalleryScalarWhereInput[]
+  }
+
+  export type TournamentRegistrationUncheckedUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput> | TournamentRegistrationCreateWithoutTournamentInput[] | TournamentRegistrationUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: TournamentRegistrationCreateOrConnectWithoutTournamentInput | TournamentRegistrationCreateOrConnectWithoutTournamentInput[]
+    upsert?: TournamentRegistrationUpsertWithWhereUniqueWithoutTournamentInput | TournamentRegistrationUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: TournamentRegistrationCreateManyTournamentInputEnvelope
+    set?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    disconnect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    delete?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    connect?: TournamentRegistrationWhereUniqueInput | TournamentRegistrationWhereUniqueInput[]
+    update?: TournamentRegistrationUpdateWithWhereUniqueWithoutTournamentInput | TournamentRegistrationUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: TournamentRegistrationUpdateManyWithWhereWithoutTournamentInput | TournamentRegistrationUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
   }
 
   export type usersCreateNestedOneWithoutGalleryPhotosInput = {
@@ -11394,6 +12891,34 @@ export namespace Prisma {
     delete?: TournamentWhereInput | boolean
     connect?: TournamentWhereUniqueInput
     update?: XOR<XOR<TournamentUpdateToOneWithWhereWithoutGalleryPhotosInput, TournamentUpdateWithoutGalleryPhotosInput>, TournamentUncheckedUpdateWithoutGalleryPhotosInput>
+  }
+
+  export type usersCreateNestedOneWithoutRegistrationsInput = {
+    create?: XOR<usersCreateWithoutRegistrationsInput, usersUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: usersCreateOrConnectWithoutRegistrationsInput
+    connect?: usersWhereUniqueInput
+  }
+
+  export type TournamentCreateNestedOneWithoutRegistrationsInput = {
+    create?: XOR<TournamentCreateWithoutRegistrationsInput, TournamentUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutRegistrationsInput
+    connect?: TournamentWhereUniqueInput
+  }
+
+  export type usersUpdateOneRequiredWithoutRegistrationsNestedInput = {
+    create?: XOR<usersCreateWithoutRegistrationsInput, usersUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: usersCreateOrConnectWithoutRegistrationsInput
+    upsert?: usersUpsertWithoutRegistrationsInput
+    connect?: usersWhereUniqueInput
+    update?: XOR<XOR<usersUpdateToOneWithWhereWithoutRegistrationsInput, usersUpdateWithoutRegistrationsInput>, usersUncheckedUpdateWithoutRegistrationsInput>
+  }
+
+  export type TournamentUpdateOneRequiredWithoutRegistrationsNestedInput = {
+    create?: XOR<TournamentCreateWithoutRegistrationsInput, TournamentUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutRegistrationsInput
+    upsert?: TournamentUpsertWithoutRegistrationsInput
+    connect?: TournamentWhereUniqueInput
+    update?: XOR<XOR<TournamentUpdateToOneWithWhereWithoutRegistrationsInput, TournamentUpdateWithoutRegistrationsInput>, TournamentUncheckedUpdateWithoutRegistrationsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11635,6 +13160,7 @@ export namespace Prisma {
     sessions?: sessionsCreateNestedManyWithoutUsersInput
     tournaments?: TournamentCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutAccountsInput = {
@@ -11649,6 +13175,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
     tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutAccountsInput = {
@@ -11679,6 +13206,7 @@ export namespace Prisma {
     sessions?: sessionsUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutAccountsInput = {
@@ -11693,6 +13221,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateWithoutProfilesInput = {
@@ -11707,6 +13236,7 @@ export namespace Prisma {
     sessions?: sessionsCreateNestedManyWithoutUsersInput
     tournaments?: TournamentCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutProfilesInput = {
@@ -11721,6 +13251,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
     tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutProfilesInput = {
@@ -11751,6 +13282,7 @@ export namespace Prisma {
     sessions?: sessionsUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutProfilesInput = {
@@ -11765,6 +13297,7 @@ export namespace Prisma {
     sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateWithoutSessionsInput = {
@@ -11779,6 +13312,7 @@ export namespace Prisma {
     profiles?: profilesCreateNestedOneWithoutUsersInput
     tournaments?: TournamentCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutSessionsInput = {
@@ -11793,6 +13327,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedCreateNestedOneWithoutUsersInput
     tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutSessionsInput = {
@@ -11823,6 +13358,7 @@ export namespace Prisma {
     profiles?: profilesUpdateOneWithoutUsersNestedInput
     tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutSessionsInput = {
@@ -11837,6 +13373,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedUpdateOneWithoutUsersNestedInput
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type accountsCreateWithoutUsersInput = {
@@ -11933,6 +13470,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     galleryPhotos?: GalleryCreateNestedManyWithoutTournamentInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutCreatorInput = {
@@ -11948,6 +13486,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutTournamentInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutCreatorInput = {
@@ -11981,6 +13520,30 @@ export namespace Prisma {
 
   export type GalleryCreateManyUserInputEnvelope = {
     data: GalleryCreateManyUserInput | GalleryCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TournamentRegistrationCreateWithoutUserInput = {
+    id?: string
+    name?: string | null
+    createdAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutRegistrationsInput
+  }
+
+  export type TournamentRegistrationUncheckedCreateWithoutUserInput = {
+    id?: string
+    tournamentId: string
+    name?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationCreateOrConnectWithoutUserInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    create: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput>
+  }
+
+  export type TournamentRegistrationCreateManyUserInputEnvelope = {
+    data: TournamentRegistrationCreateManyUserInput | TournamentRegistrationCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -12132,6 +13695,33 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Gallery"> | Date | string
   }
 
+  export type TournamentRegistrationUpsertWithWhereUniqueWithoutUserInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    update: XOR<TournamentRegistrationUpdateWithoutUserInput, TournamentRegistrationUncheckedUpdateWithoutUserInput>
+    create: XOR<TournamentRegistrationCreateWithoutUserInput, TournamentRegistrationUncheckedCreateWithoutUserInput>
+  }
+
+  export type TournamentRegistrationUpdateWithWhereUniqueWithoutUserInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    data: XOR<TournamentRegistrationUpdateWithoutUserInput, TournamentRegistrationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TournamentRegistrationUpdateManyWithWhereWithoutUserInput = {
+    where: TournamentRegistrationScalarWhereInput
+    data: XOR<TournamentRegistrationUpdateManyMutationInput, TournamentRegistrationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type TournamentRegistrationScalarWhereInput = {
+    AND?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
+    OR?: TournamentRegistrationScalarWhereInput[]
+    NOT?: TournamentRegistrationScalarWhereInput | TournamentRegistrationScalarWhereInput[]
+    id?: StringFilter<"TournamentRegistration"> | string
+    userId?: StringFilter<"TournamentRegistration"> | string
+    tournamentId?: StringFilter<"TournamentRegistration"> | string
+    name?: StringNullableFilter<"TournamentRegistration"> | string | null
+    createdAt?: DateTimeFilter<"TournamentRegistration"> | Date | string
+  }
+
   export type usersCreateWithoutTournamentsInput = {
     id: string
     name?: string | null
@@ -12144,6 +13734,7 @@ export namespace Prisma {
     profiles?: profilesCreateNestedOneWithoutUsersInput
     sessions?: sessionsCreateNestedManyWithoutUsersInput
     galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutTournamentsInput = {
@@ -12158,6 +13749,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedCreateNestedOneWithoutUsersInput
     sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
     galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutTournamentsInput = {
@@ -12189,6 +13781,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TournamentRegistrationCreateWithoutTournamentInput = {
+    id?: string
+    name?: string | null
+    createdAt?: Date | string
+    user: usersCreateNestedOneWithoutRegistrationsInput
+  }
+
+  export type TournamentRegistrationUncheckedCreateWithoutTournamentInput = {
+    id?: string
+    userId: string
+    name?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationCreateOrConnectWithoutTournamentInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    create: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type TournamentRegistrationCreateManyTournamentInputEnvelope = {
+    data: TournamentRegistrationCreateManyTournamentInput | TournamentRegistrationCreateManyTournamentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type usersUpsertWithoutTournamentsInput = {
     update: XOR<usersUpdateWithoutTournamentsInput, usersUncheckedUpdateWithoutTournamentsInput>
     create: XOR<usersCreateWithoutTournamentsInput, usersUncheckedCreateWithoutTournamentsInput>
@@ -12212,6 +13828,7 @@ export namespace Prisma {
     profiles?: profilesUpdateOneWithoutUsersNestedInput
     sessions?: sessionsUpdateManyWithoutUsersNestedInput
     galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutTournamentsInput = {
@@ -12226,6 +13843,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedUpdateOneWithoutUsersNestedInput
     sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type GalleryUpsertWithWhereUniqueWithoutTournamentInput = {
@@ -12244,6 +13862,22 @@ export namespace Prisma {
     data: XOR<GalleryUpdateManyMutationInput, GalleryUncheckedUpdateManyWithoutTournamentInput>
   }
 
+  export type TournamentRegistrationUpsertWithWhereUniqueWithoutTournamentInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    update: XOR<TournamentRegistrationUpdateWithoutTournamentInput, TournamentRegistrationUncheckedUpdateWithoutTournamentInput>
+    create: XOR<TournamentRegistrationCreateWithoutTournamentInput, TournamentRegistrationUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type TournamentRegistrationUpdateWithWhereUniqueWithoutTournamentInput = {
+    where: TournamentRegistrationWhereUniqueInput
+    data: XOR<TournamentRegistrationUpdateWithoutTournamentInput, TournamentRegistrationUncheckedUpdateWithoutTournamentInput>
+  }
+
+  export type TournamentRegistrationUpdateManyWithWhereWithoutTournamentInput = {
+    where: TournamentRegistrationScalarWhereInput
+    data: XOR<TournamentRegistrationUpdateManyMutationInput, TournamentRegistrationUncheckedUpdateManyWithoutTournamentInput>
+  }
+
   export type usersCreateWithoutGalleryPhotosInput = {
     id: string
     name?: string | null
@@ -12256,6 +13890,7 @@ export namespace Prisma {
     profiles?: profilesCreateNestedOneWithoutUsersInput
     sessions?: sessionsCreateNestedManyWithoutUsersInput
     tournaments?: TournamentCreateNestedManyWithoutCreatorInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutGalleryPhotosInput = {
@@ -12270,6 +13905,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedCreateNestedOneWithoutUsersInput
     sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
     tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutGalleryPhotosInput = {
@@ -12290,6 +13926,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: usersCreateNestedOneWithoutTournamentsInput
+    registrations?: TournamentRegistrationCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutGalleryPhotosInput = {
@@ -12305,6 +13942,7 @@ export namespace Prisma {
     createdBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    registrations?: TournamentRegistrationUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutGalleryPhotosInput = {
@@ -12335,6 +13973,7 @@ export namespace Prisma {
     profiles?: profilesUpdateOneWithoutUsersNestedInput
     sessions?: sessionsUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutGalleryPhotosInput = {
@@ -12349,6 +13988,7 @@ export namespace Prisma {
     profiles?: profilesUncheckedUpdateOneWithoutUsersNestedInput
     sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
     tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TournamentUpsertWithoutGalleryPhotosInput = {
@@ -12375,6 +14015,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: usersUpdateOneRequiredWithoutTournamentsNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutGalleryPhotosInput = {
@@ -12390,6 +14031,163 @@ export namespace Prisma {
     createdBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutTournamentNestedInput
+  }
+
+  export type usersCreateWithoutRegistrationsInput = {
+    id: string
+    name?: string | null
+    email?: string | null
+    email_verified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    user_metadata?: NullableJsonNullValueInput | InputJsonValue
+    accounts?: accountsCreateNestedManyWithoutUsersInput
+    profiles?: profilesCreateNestedOneWithoutUsersInput
+    sessions?: sessionsCreateNestedManyWithoutUsersInput
+    tournaments?: TournamentCreateNestedManyWithoutCreatorInput
+    galleryPhotos?: GalleryCreateNestedManyWithoutUserInput
+  }
+
+  export type usersUncheckedCreateWithoutRegistrationsInput = {
+    id: string
+    name?: string | null
+    email?: string | null
+    email_verified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    user_metadata?: NullableJsonNullValueInput | InputJsonValue
+    accounts?: accountsUncheckedCreateNestedManyWithoutUsersInput
+    profiles?: profilesUncheckedCreateNestedOneWithoutUsersInput
+    sessions?: sessionsUncheckedCreateNestedManyWithoutUsersInput
+    tournaments?: TournamentUncheckedCreateNestedManyWithoutCreatorInput
+    galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type usersCreateOrConnectWithoutRegistrationsInput = {
+    where: usersWhereUniqueInput
+    create: XOR<usersCreateWithoutRegistrationsInput, usersUncheckedCreateWithoutRegistrationsInput>
+  }
+
+  export type TournamentCreateWithoutRegistrationsInput = {
+    id?: string
+    title: string
+    name: string
+    description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
+    date: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: usersCreateNestedOneWithoutTournamentsInput
+    galleryPhotos?: GalleryCreateNestedManyWithoutTournamentInput
+  }
+
+  export type TournamentUncheckedCreateWithoutRegistrationsInput = {
+    id?: string
+    title: string
+    name: string
+    description?: string | null
+    googleMapsUrl?: string | null
+    price?: number | null
+    maxPeople: number
+    registeredPeople?: number
+    date: Date | string
+    createdBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    galleryPhotos?: GalleryUncheckedCreateNestedManyWithoutTournamentInput
+  }
+
+  export type TournamentCreateOrConnectWithoutRegistrationsInput = {
+    where: TournamentWhereUniqueInput
+    create: XOR<TournamentCreateWithoutRegistrationsInput, TournamentUncheckedCreateWithoutRegistrationsInput>
+  }
+
+  export type usersUpsertWithoutRegistrationsInput = {
+    update: XOR<usersUpdateWithoutRegistrationsInput, usersUncheckedUpdateWithoutRegistrationsInput>
+    create: XOR<usersCreateWithoutRegistrationsInput, usersUncheckedCreateWithoutRegistrationsInput>
+    where?: usersWhereInput
+  }
+
+  export type usersUpdateToOneWithWhereWithoutRegistrationsInput = {
+    where?: usersWhereInput
+    data: XOR<usersUpdateWithoutRegistrationsInput, usersUncheckedUpdateWithoutRegistrationsInput>
+  }
+
+  export type usersUpdateWithoutRegistrationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    email_verified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    user_metadata?: NullableJsonNullValueInput | InputJsonValue
+    accounts?: accountsUpdateManyWithoutUsersNestedInput
+    profiles?: profilesUpdateOneWithoutUsersNestedInput
+    sessions?: sessionsUpdateManyWithoutUsersNestedInput
+    tournaments?: TournamentUpdateManyWithoutCreatorNestedInput
+    galleryPhotos?: GalleryUpdateManyWithoutUserNestedInput
+  }
+
+  export type usersUncheckedUpdateWithoutRegistrationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    email_verified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    user_metadata?: NullableJsonNullValueInput | InputJsonValue
+    accounts?: accountsUncheckedUpdateManyWithoutUsersNestedInput
+    profiles?: profilesUncheckedUpdateOneWithoutUsersNestedInput
+    sessions?: sessionsUncheckedUpdateManyWithoutUsersNestedInput
+    tournaments?: TournamentUncheckedUpdateManyWithoutCreatorNestedInput
+    galleryPhotos?: GalleryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TournamentUpsertWithoutRegistrationsInput = {
+    update: XOR<TournamentUpdateWithoutRegistrationsInput, TournamentUncheckedUpdateWithoutRegistrationsInput>
+    create: XOR<TournamentCreateWithoutRegistrationsInput, TournamentUncheckedCreateWithoutRegistrationsInput>
+    where?: TournamentWhereInput
+  }
+
+  export type TournamentUpdateToOneWithWhereWithoutRegistrationsInput = {
+    where?: TournamentWhereInput
+    data: XOR<TournamentUpdateWithoutRegistrationsInput, TournamentUncheckedUpdateWithoutRegistrationsInput>
+  }
+
+  export type TournamentUpdateWithoutRegistrationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: usersUpdateOneRequiredWithoutTournamentsNestedInput
+    galleryPhotos?: GalleryUpdateManyWithoutTournamentNestedInput
+  }
+
+  export type TournamentUncheckedUpdateWithoutRegistrationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    googleMapsUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    price?: NullableFloatFieldUpdateOperationsInput | number | null
+    maxPeople?: IntFieldUpdateOperationsInput | number
+    registeredPeople?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    galleryPhotos?: GalleryUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type accountsCreateManyUsersInput = {
@@ -12430,6 +14228,13 @@ export namespace Prisma {
     id?: string
     imageUrl: string
     tournamentId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationCreateManyUserInput = {
+    id?: string
+    tournamentId: string
+    name?: string | null
     createdAt?: Date | string
   }
 
@@ -12506,6 +14311,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     galleryPhotos?: GalleryUpdateManyWithoutTournamentNestedInput
+    registrations?: TournamentRegistrationUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutCreatorInput = {
@@ -12521,6 +14327,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     galleryPhotos?: GalleryUncheckedUpdateManyWithoutTournamentNestedInput
+    registrations?: TournamentRegistrationUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateManyWithoutCreatorInput = {
@@ -12558,10 +14365,38 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TournamentRegistrationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutRegistrationsNestedInput
+  }
+
+  export type TournamentRegistrationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type GalleryCreateManyTournamentInput = {
     id?: string
     imageUrl: string
     userId: string
+    createdAt?: Date | string
+  }
+
+  export type TournamentRegistrationCreateManyTournamentInput = {
+    id?: string
+    userId: string
+    name?: string | null
     createdAt?: Date | string
   }
 
@@ -12583,6 +14418,27 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: usersUpdateOneRequiredWithoutRegistrationsNestedInput
+  }
+
+  export type TournamentRegistrationUncheckedUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournamentRegistrationUncheckedUpdateManyWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

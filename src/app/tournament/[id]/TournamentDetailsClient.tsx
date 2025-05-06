@@ -1,19 +1,38 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function TournamentDetailsClient({ id }: { id: string }) {
   const { data: tournament, mutate } = useSWR(`/api/tournaments/${id}`, fetcher);
-  const [name, setName] = useState("");
+  const [users, setUsers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [userInput, setUserInput] = useState("");
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; email: string } | null>(null);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  const filteredUsers = users.filter(
+    (u) =>
+      (u.name?.toLowerCase() || "").includes(userInput.toLowerCase()) ||
+      (u.email?.toLowerCase() || "").includes(userInput.toLowerCase())
+  );
 
   if (!tournament) {
     return (
@@ -30,16 +49,24 @@ export default function TournamentDetailsClient({ id }: { id: string }) {
     e.preventDefault();
     setSuccess("");
     setError("");
+    if (!selectedUser) {
+      setError("Bitte wähle einen Benutzer aus.");
+      return;
+    }
     startTransition(async () => {
       const res = await fetch(`/api/tournaments/${id}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name: selectedUser.name }),
       });
       if (res.ok) {
         setSuccess("Erfolgreich registriert!");
-        setName("");
+        setSelectedUser(null);
+        setUserInput("");
         mutate(); // revalidate data
+        setTimeout(() => {
+          router.push("/tournament");
+        }, 1500);
       } else {
         const data = await res.json().catch(() => ({}));
         setError(data.error || "Fehler bei der Registrierung.");
@@ -86,16 +113,44 @@ export default function TournamentDetailsClient({ id }: { id: string }) {
           {/* Registration form (mocked) */}
           <form
             onSubmit={handleRegister}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-4 relative"
+            autoComplete="off"
           >
-            <input
-              type="text"
-              placeholder="Dein Name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input input-bordered px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900"
-            />
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Benutzer suchen und auswählen..."
+                value={selectedUser ? (selectedUser.name || selectedUser.email) : userInput}
+                onChange={e => {
+                  setUserInput(e.target.value);
+                  setSelectedUser(null);
+                  setDropdownOpen(true);
+                }}
+                onFocus={() => setDropdownOpen(true)}
+                onBlur={() => setTimeout(() => setDropdownOpen(false), 100)}
+                className="input input-bordered px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                autoComplete="off"
+              />
+              {dropdownOpen && filteredUsers.length > 0 && !selectedUser && (
+                <ul className="absolute z-20 mt-1 w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded shadow-lg max-h-48 overflow-auto">
+                  {filteredUsers.map((u) => (
+                    <li
+                      key={u.id}
+                      className="px-3 py-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      onMouseDown={() => {
+                        setSelectedUser(u);
+                        setUserInput("");
+                        setDropdownOpen(false);
+                        setTimeout(() => inputRef.current?.blur(), 0);
+                      }}
+                    >
+                      {u.name || u.email} {u.email && u.name ? `(${u.email})` : u.email}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <Button type="submit" size="lg" className="w-full" disabled={isPending}>
               {isPending ? "Registrieren..." : "Jetzt registrieren"}
             </Button>

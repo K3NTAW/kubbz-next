@@ -190,6 +190,14 @@ exports.Prisma.GalleryScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TournamentRegistrationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tournamentId: 'tournamentId',
+  name: 'name',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -224,7 +232,8 @@ exports.Prisma.ModelName = {
   users: 'users',
   verification_tokens: 'verification_tokens',
   Tournament: 'Tournament',
-  Gallery: 'Gallery'
+  Gallery: 'Gallery',
+  TournamentRegistration: 'TournamentRegistration'
 };
 
 /**

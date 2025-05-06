@@ -58,6 +58,7 @@ model users {
   sessions       sessions[]
   tournaments    Tournament[] @relation("UserTournaments")
   galleryPhotos  Gallery[]    @relation("UserGalleryPhotos")
+  registrations  TournamentRegistration[]
 }
 
 model verification_tokens {
@@ -83,6 +84,7 @@ model Tournament {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   galleryPhotos     Gallery[]
+  registrations     TournamentRegistration[]
 }
 
 model Gallery {
@@ -93,4 +95,17 @@ model Gallery {
   tournamentId String?
   tournament   Tournament? @relation(fields: [tournamentId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model TournamentRegistration {
+  id           String   @id @default(uuid())
+  userId       String
+  tournamentId String
+  name         String? // Name of the person being registered (can be different from user)
+  createdAt    DateTime @default(now())
+
+  user         users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tournamentId])
 }
