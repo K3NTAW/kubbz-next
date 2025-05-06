@@ -83,7 +83,21 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+  const prisma = new PrismaClient();
   try {
+    // If ?registrations=1 is present, return registrations for this tournament
+    const url = new URL(req.url);
+    if (url.searchParams.get("registrations") === "1") {
+      const registrations = await prisma.tournamentRegistration.findMany({
+        where: { tournamentId: id },
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      });
+      return NextResponse.json(registrations);
+    }
+    // Otherwise, return the tournament as before
     const tournament = await prisma.tournament.findUnique({ where: { id } });
     if (!tournament) {
       return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });

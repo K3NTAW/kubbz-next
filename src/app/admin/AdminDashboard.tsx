@@ -41,6 +41,12 @@ type Tournament = {
   registeredPeople: string;
   date?: string;
 };
+type Registration = {
+  id: string;
+  name?: string;
+  user: { id: string; name?: string; email?: string };
+  createdAt: string;
+};
 
 export default function AdminDashboard({ users, tournaments }: { users: User[]; tournaments: Tournament[] }) {
   const [view, setView] = useState<"users" | "tournaments">("users");
@@ -52,6 +58,11 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createModal, setCreateModal] = useState(false);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [regLoading, setRegLoading] = useState(false);
+  const [regError, setRegError] = useState<string | null>(null);
+  const [detailOverlay, setDetailOverlay] = useState<null | Tournament>(null);
+  const [userEditOverlay, setUserEditOverlay] = useState<null | User>(null);
 
   // Filtered users
   const filteredUsers = useMemo(() => {
@@ -197,6 +208,80 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       setLoading(false);
     }
   };
+  const openDetailOverlay = async (t: Tournament) => {
+    setDetailOverlay(t);
+    setRegLoading(true);
+    setRegError(null);
+    try {
+      const res = await fetch(`/api/tournaments/${t.id}?registrations=1`);
+      if (!res.ok) throw new Error("Failed to fetch registrations");
+      const data = await res.json();
+      setRegistrations(data);
+    } catch {
+      setRegError("Failed to fetch registrations");
+      setRegistrations([]);
+    } finally {
+      setRegLoading(false);
+    }
+  };
+  const closeDetailOverlay = () => {
+    setDetailOverlay(null);
+    setRegistrations([]);
+    setRegError(null);
+  };
+  const handleDeleteRegistration = async (regId: string, tournamentId: string) => {
+    if (!confirm("Are you sure you want to delete this registration?")) return;
+    setRegLoading(true);
+    setRegError(null);
+    try {
+      const res = await fetch(`/api/tournaments/${tournamentId}/register/${regId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete registration");
+      setRegistrations((prev) => prev.filter((r) => r.id !== regId));
+    } catch {
+      setRegError("Failed to delete registration");
+    } finally {
+      setRegLoading(false);
+    }
+  };
+  const openUserEditOverlay = (user: User) => {
+    setForm({
+      name: user.name || "",
+      email: user.email || "",
+      role: user.user_metadata?.role || "user",
+    });
+    setUserEditOverlay(user);
+    setError(null);
+  };
+  const closeUserEditOverlay = () => {
+    setUserEditOverlay(null);
+    setForm({});
+    setError(null);
+  };
+  const handleUserEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userEditOverlay) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/users/${userEditOverlay.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          user_metadata: { ...userEditOverlay.user_metadata, role: form.role },
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update user");
+      const { user } = await res.json();
+      setUserList((prev) => prev.map((u) => u.id === user.id ? user : u));
+      closeUserEditOverlay();
+    } catch {
+      setError("Failed to update user");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // TanStack Table columns
   const columns = useMemo<ColumnDef<User, unknown>[]>(
@@ -221,7 +306,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         id: "actions",
         cell: info => (
           <div className="flex gap-2">
-            <Button size="icon" variant="ghost" aria-label="Edit" onClick={() => openEditModal("user", info.row.original)}>
+            <Button size="icon" variant="ghost" aria-label="Edit" onClick={() => openUserEditOverlay(info.row.original)}>
               <Edit2 className="w-4 h-4" />
             </Button>
             <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => handleDeleteUser(info.row.original.id)} disabled={loading}>
@@ -323,6 +408,9 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                     <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", t)}>
                       Edit
                     </Button>
+                    <Button size="sm" variant="outline" className="mr-2" onClick={() => openDetailOverlay(t)}>
+                      Detail
+                    </Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.id)} disabled={loading}>
                       Delete
                     </Button>
@@ -371,58 +459,130 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
               </form>
             </SheetContent>
           </Sheet>
+          {/* Edit Modal */}
+          <Sheet open={!!editModal} onOpenChange={v => { if (!v) closeEditModal(); }}>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Edit {editModal?.type === "user" ? "User" : "Tournament"}</SheetTitle>
+                <SheetDescription>
+                  Update the {editModal?.type === "user" ? "user's" : "tournament's"} details below.
+                </SheetDescription>
+              </SheetHeader>
+              <form onSubmit={handleEditSubmit} className="flex flex-col gap-4 p-4">
+                {editModal?.type === "user" ? (
+                  <>
+                    <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
+                    <Input name="email" placeholder="Email" value={form.email || ""} onChange={handleFormChange} required />
+                    <Input name="role" placeholder="Role" value={form.role || ""} onChange={handleFormChange} required />
+                  </>
+                ) : (
+                  <>
+                    <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
+                    <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
+                    <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
+                    <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
+                    {form.googleMapsUrl && (
+                      <iframe
+                        src={form.googleMapsUrl}
+                        width="100%"
+                        height="200"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    )}
+                    <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
+                    <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
+                    <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
+                    {/* Placeholder for image upload/linking */}
+                    <div className="text-xs text-muted-foreground">Image linking coming soon</div>
+                  </>
+                )}
+                <SheetFooter>
+                  <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline" onClick={closeEditModal}>Cancel</Button>
+                  </SheetClose>
+                </SheetFooter>
+                {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+              </form>
+            </SheetContent>
+          </Sheet>
         </>
       )}
-      {/* Edit Modal */}
-      <Sheet open={!!editModal} onOpenChange={v => { if (!v) closeEditModal(); }}>
-        <SheetContent side="right">
-          <SheetHeader>
-            <SheetTitle>Edit {editModal?.type === "user" ? "User" : "Tournament"}</SheetTitle>
-            <SheetDescription>
-              Update the {editModal?.type === "user" ? "user's" : "tournament's"} details below.
-            </SheetDescription>
-          </SheetHeader>
-          <form onSubmit={handleEditSubmit} className="flex flex-col gap-4 p-4">
-            {editModal?.type === "user" ? (
-              <>
-                <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
-                <Input name="email" placeholder="Email" value={form.email || ""} onChange={handleFormChange} required />
-                <Input name="role" placeholder="Role" value={form.role || ""} onChange={handleFormChange} required />
-              </>
+      {/* Centered Overlay for User Edit (always available) */}
+      {userEditOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="relative bg-white dark:bg-zinc-900 rounded-lg shadow-xl w-full max-w-md mx-auto p-6 overflow-y-auto max-h-[90vh]">
+            <button
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+              onClick={closeUserEditOverlay}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="font-bold text-lg mb-2">Edit User</div>
+            <form onSubmit={handleUserEditSubmit} className="flex flex-col gap-4">
+              <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
+              <Input name="email" placeholder="Email" value={form.email || ""} onChange={handleFormChange} required />
+              <Input name="role" placeholder="Role" value={form.role || ""} onChange={handleFormChange} required />
+              <div className="flex gap-2 mt-2">
+                <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
+                <Button type="button" variant="outline" onClick={closeUserEditOverlay}>Cancel</Button>
+              </div>
+              {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Centered Overlay for Tournament Detail */}
+      {detailOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="relative bg-white dark:bg-zinc-900 rounded-lg shadow-xl w-full max-w-2xl mx-auto p-6 overflow-y-auto max-h-[90vh]">
+            <button
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+              onClick={closeDetailOverlay}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="font-bold text-lg mb-2">Registrations for <b>{detailOverlay.name}</b></div>
+            {regLoading ? (
+              <div>Loading...</div>
+            ) : regError ? (
+              <div className="text-red-500">{regError}</div>
+            ) : registrations.length === 0 ? (
+              <div>No registrations yet.</div>
             ) : (
-              <>
-                <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
-                <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
-                <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
-                <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
-                {form.googleMapsUrl && (
-                  <iframe
-                    src={form.googleMapsUrl}
-                    width="100%"
-                    height="200"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                )}
-                <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
-                <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
-                <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
-                {/* Placeholder for image upload/linking */}
-                <div className="text-xs text-muted-foreground">Image linking coming soon</div>
-              </>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name Registered</TableHead>
+                    <TableHead>Registered By (User)</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {registrations.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell>{r.name}</TableCell>
+                      <TableCell>{r.user?.name || r.user?.id}</TableCell>
+                      <TableCell>{r.user?.email || "-"}</TableCell>
+                      <TableCell>
+                        <Button size="sm" variant="destructive" onClick={() => handleDeleteRegistration(r.id, detailOverlay.id)} disabled={regLoading}>
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
-            <SheetFooter>
-              <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
-              <SheetClose asChild>
-                <Button type="button" variant="outline" onClick={closeEditModal}>Cancel</Button>
-              </SheetClose>
-            </SheetFooter>
-            {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-          </form>
-        </SheetContent>
-      </Sheet>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
