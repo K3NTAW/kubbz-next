@@ -63,7 +63,7 @@ export default function TournamentsListSection({ tournaments }: TournamentsListS
           : true);
       return matchesSearch && matchesSeason && matchesDate;
     });
-  }, [search, season, dateRange]);
+  }, [search, season, dateRange, tournaments]);
 
   return (
     <div className="max-w-5xl mx-auto py-12 px-4">
