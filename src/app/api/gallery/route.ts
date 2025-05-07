@@ -1,39 +1,60 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getXataClient } from "@/xata";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/authOptions";
+
+export const config = {
+  api: {
+    bodyParser: false, // Disables Next.js default body parsing
+  },
+};
 
 export async function GET() {
   const xata = getXataClient();
-  const images = await xata.db.Gallery.getAll();
-  // Map to only include xata_id, xata_createdat, xata_updatedat, image.url, userId
+  const images = await xata.db.gallery.select(["xata_id", "image", "user_id", "tournament_id"]).getAll();
+  console.log("Fetched images from Xata:", images);
+  // Map to include image URL
   const result = images.map(img => ({
-    xata_id: img.xata_id,
-    xata_createdat: img.xata_createdat,
-    xata_updatedat: img.xata_updatedat,
-    imageUrl: img.image?.url ?? null,
-    userId: img.userId ?? null,
+    xata_id: img.id,
+    image_url: img.image?.url ?? null,
+    user_id: img.user_id,
+    tournament_id: img.tournament_id,
   }));
   return NextResponse.json(result);
 }
 
 export async function POST(req: NextRequest) {
-  const xata = getXataClient();
+  const session = await getServerSession(authOptions);
+  const user = session?.user as { xata_id?: string };
+  if (!session || !user?.xata_id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const formData = await req.formData();
-  const file = formData.get("file");
-  const userId = formData.get("userId") as string | undefined;
-  if (!file || !(file instanceof Blob)) {
+  const file = formData.get("file") as File | null;
+  if (!file) {
     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
   }
-  // Upload file to Xata
-  const record = await xata.db.Gallery.create({
-    userId,
-    image: file,
+
+  const arrayBuffer = await file.arrayBuffer();
+  const base64Content = Buffer.from(arrayBuffer).toString("base64");
+
+  const tournament_id = formData.get("tournament_id") as string | null;
+  const xata = getXataClient();
+  const record = await xata.db.gallery.create({
+    image: {
+      name: file.name,
+      mediaType: file.type,
+      base64Content,
+      enablePublicUrl: true,
+    },
+    user_id: user.xata_id,
+    tournament_id: tournament_id || null,
   });
-  // Return only the relevant fields
   return NextResponse.json({
     xata_id: record.xata_id,
-    xata_createdat: record.xata_createdat,
-    xata_updatedat: record.xata_updatedat,
-    imageUrl: record.image?.url ?? null,
-    userId: record.userId ?? null,
+    image_url: record.image?.url ?? null,
+    user_id: record.user_id,
+    tournament_id: record.tournament_id,
   });
 } 

@@ -9,33 +9,41 @@ import { getXataClient } from "@/xata";
 //   user_metadata: z.object({ role: z.string().optional() }).optional(),
 // });
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function GET(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: xata_id } = context.params;
+  const { id } = params;
   try {
-    await xata.db.users.delete(xata_id);
-    return NextResponse.json({ success: true });
+    const user = await xata.db.users.read(id);
+    if (!user) {
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    }
+    return NextResponse.json(user);
   } catch {
-    return NextResponse.json(
-      { error: "Failed to delete user." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch user." }, { status: 500 });
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function DELETE(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: xata_id } = context.params;
+  const { id } = params;
+  try {
+    await xata.db.users.delete(id);
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to delete user." }, { status: 500 });
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function PUT(req: NextRequest, { params }: any) {
+  const xata = getXataClient();
+  const { id } = params;
   try {
     const body = await req.json();
     // const data = UserUpdateSchema.parse(body); // Use if validating
-    const user = await xata.db.users.update(xata_id, body);
+    const user = await xata.db.users.update(id, body);
     return NextResponse.json({
       user: {
         xata_id: user?.xata_id,

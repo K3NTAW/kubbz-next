@@ -27,10 +27,10 @@ export default async function AdminPage() {
       title: t.title ?? "",
       name: t.name ?? "",
       description: t.description ?? undefined,
-      googleMapsUrl: t.googleMapsUrl ?? "",
+      googleMapsUrl: t.google_maps_url ?? "",
       price: t.price !== undefined && t.price !== null ? String(t.price) : "",
-      maxPeople: t.maxPeople !== undefined && t.maxPeople !== null ? String(t.maxPeople) : "",
-      registeredPeople: t.registeredPeople !== undefined && t.registeredPeople !== null ? String(t.registeredPeople) : "0",
+      maxPeople: t.max_people !== undefined && t.max_people !== null ? String(t.max_people) : "",
+      registeredPeople: t.registered_people !== undefined && t.registered_people !== null ? String(t.registered_people) : "0",
       date: typeof t.date === "string" ? t.date : (t.date ? String(t.date) : ""),
     }))}
   />;

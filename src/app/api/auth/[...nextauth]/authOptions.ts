@@ -1,22 +1,9 @@
 import type { AuthOptions, SessionStrategy, DefaultSession } from "next-auth";
-import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcryptjs";
 import { getXataClient } from "@/xata";
-
-// Define a type for session user with xata_id, role, id, name, email
-// All properties are optional to match NextAuth's user shape
-// id is string | undefined for compatibility
-
-type SessionUserWithXataId = {
-  id?: string;
-  name?: string | null;
-  email?: string | null;
-  xata_id?: string;
-  role?: string;
-};
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -58,27 +45,25 @@ export const authOptions: AuthOptions = {
     error: "/login", // Error code passed in query string as ?error=
   },
   callbacks: {
-    async session({ session, token }: { session: DefaultSession; token: JWT }) {
-      const userWithXata = session.user as SessionUserWithXataId;
-      if (token && userWithXata) {
-        userWithXata.id = token.sub;
-        // Fetch user from Xata to get user_metadata
+    async session({ session }: { session: DefaultSession }) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userWithXata = session.user as any;
+      if (userWithXata?.email) {
         const xata = getXataClient();
-        let user = await xata.db.users.read(token.sub!);
-        if (!user && userWithXata?.email) {
-          // Fallback: fetch by email
-          user = await xata.db.users.filter({ email: userWithXata.email }).getFirst();
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const user = await (xata.db.users.filter({ email: userWithXata.email } as any).getFirst());
+        console.log("Xata user by email:", user);
         if (
-          user?.user_metadata &&
+          user &&
+          user.user_metadata &&
           typeof user.user_metadata === "object" &&
           user.user_metadata !== null &&
           "role" in user.user_metadata
         ) {
-          userWithXata.role = (user.user_metadata as { role?: string }).role;
+          userWithXata.role = user.user_metadata.role;
         }
         if (user) {
-          userWithXata.xata_id = user.xata_id;
+          userWithXata.xata_id = user.id;
         }
       }
       return session;

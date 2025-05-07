@@ -3,23 +3,24 @@ import { getXataClient } from "@/xata";
 
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string; registrationId: string } }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { params }: any
 ) {
   const xata = getXataClient();
-  const { id: tournamentId, registrationId } = context.params;
+  const { id: tournamentId, registrationId } = params;
   try {
     // Find the registration to get the tournamentId (for safety)
-    const registration = await xata.db.TournamentRegistration.read(registrationId);
+    const registration = await xata.db.tournament_registrations.read(registrationId);
     if (!registration) {
       return NextResponse.json({ error: "Registration not found." }, { status: 404 });
     }
     // Delete the registration
-    await xata.db.TournamentRegistration.delete(registrationId);
-    // Decrement registeredPeople for the tournament
-    const tournament = await xata.db.Tournament.read(tournamentId);
-    if (tournament && typeof tournament.registeredPeople === "number") {
-      await xata.db.Tournament.update(tournamentId, {
-        registeredPeople: Math.max(0, tournament.registeredPeople - 1),
+    await xata.db.tournament_registrations.delete(registrationId);
+    // Decrement registered_people for the tournament
+    const tournament = await xata.db.tournaments.read(tournamentId);
+    if (tournament && typeof tournament.registered_people === "number") {
+      await xata.db.tournaments.update(tournamentId, {
+        registered_people: Math.max(0, tournament.registered_people - 1),
       });
     }
     return NextResponse.json({ success: true });

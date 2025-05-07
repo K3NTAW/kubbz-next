@@ -9,14 +9,12 @@ import { getXataClient } from "@/xata";
 //   date: z.string().optional(),
 // });
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function DELETE(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: xata_id } = context.params;
+  const { id } = params;
   try {
-    await xata.db.Tournament.delete(xata_id);
+    await xata.db.tournaments.delete(id);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
@@ -26,15 +24,13 @@ export async function DELETE(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function PUT(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: xata_id } = context.params;
+  const { id } = params;
   try {
     const body = await req.json();
-    const tournament = await xata.db.Tournament.update(xata_id, body);
+    const tournament = await xata.db.tournaments.update(id, body);
     return NextResponse.json({
       tournament: {
         xata_id: tournament?.xata_id,
@@ -53,29 +49,17 @@ export async function PUT(
   }
 }
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function GET(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: xata_id } = context.params;
+  const { id } = params;
   try {
-    const tournament = await xata.db.Tournament.read(xata_id);
+    const tournament = await xata.db.tournaments.read(id);
     if (!tournament) {
       return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
     }
-    return NextResponse.json({
-      xata_id: tournament.xata_id,
-      xata_createdat: tournament.xata_createdat,
-      xata_updatedat: tournament.xata_updatedat,
-      title: tournament.title,
-      name: tournament.name,
-      // add other fields as needed
-    });
+    return NextResponse.json(tournament);
   } catch {
-    return NextResponse.json(
-      { error: "Fehler beim Laden des Turniers." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Fehler beim Abrufen des Turniers." }, { status: 500 });
   }
 } 
