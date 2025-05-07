@@ -22,7 +22,7 @@ export default async function AdminPage() {
 
   return <AdminDashboard
     users={users.map(u => ({
-      xata_id: u.xata_id,
+      xata_id: u.id,
       name: u.name ?? undefined,
       email: u.email ?? undefined,
       user_metadata: (u.user_metadata && typeof u.user_metadata === 'object' && !Array.isArray(u.user_metadata))
@@ -30,7 +30,7 @@ export default async function AdminPage() {
         : { role: 'user' },
     }))}
     tournaments={tournaments.map(t => ({
-      xata_id: t.xata_id,
+      xata_id: t.id,
       title: t.title ?? "",
       name: t.name ?? "",
       description: t.description ?? undefined,

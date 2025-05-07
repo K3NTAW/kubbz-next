@@ -10,9 +10,12 @@ import { getXataClient } from "@/xata";
 // });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function GET(req: NextRequest, { params }: any) {
+export async function GET(req: NextRequest, { params }: { params: any }) {
+  const id = params.id;
+  if (!id) {
+    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
+  }
   const xata = getXataClient();
-  const { id } = params;
   try {
     const user = await xata.db.users.read(id);
     if (!user) {
@@ -25,9 +28,12 @@ export async function GET(req: NextRequest, { params }: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function DELETE(req: NextRequest, { params }: any) {
+export async function DELETE(req: NextRequest, { params }: { params: any }) {
+  const id = params.id;
+  if (!id) {
+    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
+  }
   const xata = getXataClient();
-  const { id } = params;
   try {
     await xata.db.users.delete(id);
     return NextResponse.json({ success: true });
@@ -37,9 +43,12 @@ export async function DELETE(req: NextRequest, { params }: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PUT(req: NextRequest, { params }: any) {
+export async function PUT(req: NextRequest, { params }: { params: any }) {
+  const id = params.id;
+  if (!id) {
+    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
+  }
   const xata = getXataClient();
-  const { id } = params;
   try {
     const body = await req.json();
     // const data = UserUpdateSchema.parse(body); // Use if validating

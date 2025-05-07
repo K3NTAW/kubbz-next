@@ -65,14 +65,25 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
 
   // Filtered users
   const filteredUsers = useMemo(() => {
-    return userList.filter((u) =>
-      (u.name || "").toLowerCase().includes(userSearch.toLowerCase()) ||
-      (u.email || "").toLowerCase().includes(userSearch.toLowerCase())
-    );
+    const filtered = userList
+      .filter(u => !!u.xata_id) // Only users with xata_id
+      .filter((u) =>
+        (u.name || "").toLowerCase().includes(userSearch.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(userSearch.toLowerCase())
+      );
+    if (userList.some(u => !u.xata_id)) {
+      console.warn("Some users are missing xata_id:", userList.filter(u => !u.xata_id));
+    }
+    return filtered;
   }, [userList, userSearch]);
 
   // Handlers
   const handleDeleteUser = async (xata_id: string) => {
+    console.log("Delete user called with xata_id:", xata_id);
+    if (!xata_id) {
+      setError("User ID is missing");
+      return;
+    }
     if (!confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
     setError(null);
@@ -132,7 +143,13 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     setError(null);
     try {
       if (editModal.type === "user") {
-        const res = await fetch(`/api/users/${(editModal.data as User).xata_id}`, {
+        const userId = (editModal.data as User).xata_id;
+        if (!userId) {
+          setError("User ID is missing");
+          setLoading(false);
+          return;
+        }
+        const res = await fetch(`/api/users/${userId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -259,6 +276,11 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const handleUserEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userEditOverlay) return;
+    console.log("User edit submit for:", userEditOverlay);
+    if (!userEditOverlay.xata_id) {
+      setError("User ID is missing");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -308,7 +330,10 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             <Button size="icon" variant="ghost" aria-label="Edit" onClick={() => openUserEditOverlay(info.row.original)}>
               <Edit2 className="w-4 h-4" />
             </Button>
-            <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => handleDeleteUser(info.row.original.xata_id)} disabled={loading}>
+            <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => {
+              console.log("Delete button clicked for user:", info.row.original);
+              handleDeleteUser(info.row.original.xata_id);
+            }} disabled={loading}>
               <Trash2 className="w-4 h-4 text-red-500" />
             </Button>
           </div>
