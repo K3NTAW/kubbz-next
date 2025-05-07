@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_17e56c00b7dbb7",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE \"Tournament\" ADD COLUMN \"googleMapsUrl\" text, ADD COLUMN \"maxPeople\" int NOT NULL, ADD COLUMN price double precision, ADD COLUMN \"registeredPeople\" int NOT NULL DEFAULT 0, ADD COLUMN title text NOT NULL"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_17e56c00b7dbb7",
+  "parent": "sql_67ec359abda1d8",
+  "schema": "public",
+  "startedAt": "2025-05-05T16:03:41.58262Z"
+}

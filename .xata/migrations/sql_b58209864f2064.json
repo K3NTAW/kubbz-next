@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_b58209864f2064",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE TABLE \"Tournament\" (id text NOT NULL, name text NOT NULL, description text, date timestamp(3) NOT NULL, \"createdBy\" text NOT NULL, \"createdAt\" timestamp(3) NOT NULL DEFAULT current_timestamp, \"updatedAt\" timestamp(3) NOT NULL, CONSTRAINT \"Tournament_pkey\" PRIMARY KEY (id))"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_b58209864f2064",
+  "parent": "sql_7fe5a89e4f4f26",
+  "schema": "public",
+  "startedAt": "2025-05-04T18:05:39.365984Z"
+}

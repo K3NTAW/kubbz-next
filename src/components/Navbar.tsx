@@ -36,6 +36,7 @@ function isUserWithRole(user: unknown): user is UserWithRole {
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  console.log('Navbar session:', session); // Debug session
   const isAdmin = isUserWithRole(session?.user) && session?.user?.role === "admin";
   const menuItems = [
     { title: "Home", url: "/", icon: Home },

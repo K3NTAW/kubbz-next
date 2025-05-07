@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_856fc1a0fea1e4",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE UNIQUE INDEX profiles_username_key ON profiles USING btree (username)"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_856fc1a0fea1e4",
+  "parent": "sql_d964984b22ddf1",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:33.804508Z"
+}

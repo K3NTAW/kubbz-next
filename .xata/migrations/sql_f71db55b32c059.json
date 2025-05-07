@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_f71db55b32c059",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE UNIQUE INDEX users_email_key ON users USING btree (email)"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_f71db55b32c059",
+  "parent": "sql_921040ebc9d9e3",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:33.077508Z"
+}

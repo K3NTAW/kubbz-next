@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_67ec359abda1d8",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE \"Gallery\" ADD COLUMN \"tournamentId\" text"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_67ec359abda1d8",
+  "parent": "sql_f01d8de53939aa",
+  "schema": "public",
+  "startedAt": "2025-05-05T16:03:41.319925Z"
+}

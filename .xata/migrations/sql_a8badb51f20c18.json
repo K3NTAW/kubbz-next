@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_a8badb51f20c18",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE \"TournamentRegistration\" ADD CONSTRAINT \"TournamentRegistration_userId_fkey\" FOREIGN KEY (\"userId\") REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_a8badb51f20c18",
+  "parent": "sql_54697d0ecd0990",
+  "schema": "public",
+  "startedAt": "2025-05-06T12:44:18.289104Z"
+}

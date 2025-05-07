@@ -1,5 +1,5 @@
 // import { getServerSession } from "next-auth";
-import { PrismaClient } from "@/generated/prisma";
+import { getXataClient } from "@/xata";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function AdminPage() {
@@ -7,30 +7,15 @@ export default async function AdminPage() {
   // if (!session || session.user?.role !== "admin") {
   //   redirect("/");
   // }
-  const prisma = new PrismaClient();
-  const users = await prisma.users.findMany({
-    select: { id: true, name: true, email: true, user_metadata: true },
-    orderBy: { name: "asc" },
-  });
-  const tournaments = await prisma.tournament.findMany({
-    select: {
-      id: true,
-      title: true,
-      name: true,
-      description: true,
-      googleMapsUrl: true,
-      price: true,
-      maxPeople: true,
-      registeredPeople: true,
-      date: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: { date: "desc" },
-  });
+  const xata = getXataClient();
+  // Fetch users
+  const users = await xata.db.users.getAll();
+  // Fetch tournaments
+  const tournaments = await xata.db.tournaments.getAll();
+
   return <AdminDashboard
     users={users.map(u => ({
-      ...u,
+      xata_id: u.xata_id,
       name: u.name ?? undefined,
       email: u.email ?? undefined,
       user_metadata: (u.user_metadata && typeof u.user_metadata === 'object' && !Array.isArray(u.user_metadata))
@@ -38,14 +23,15 @@ export default async function AdminPage() {
         : { role: 'user' },
     }))}
     tournaments={tournaments.map(t => ({
-      ...t,
-      date: t.date instanceof Date ? t.date.toISOString() : t.date,
-      description: t.description ?? undefined,
+      xata_id: t.xata_id,
       title: t.title ?? "",
+      name: t.name ?? "",
+      description: t.description ?? undefined,
       googleMapsUrl: t.googleMapsUrl ?? "",
-      price: t.price?.toString() ?? "",
-      maxPeople: t.maxPeople?.toString() ?? "",
-      registeredPeople: t.registeredPeople?.toString() ?? "0",
+      price: t.price !== undefined && t.price !== null ? String(t.price) : "",
+      maxPeople: t.maxPeople !== undefined && t.maxPeople !== null ? String(t.maxPeople) : "",
+      registeredPeople: t.registeredPeople !== undefined && t.registeredPeople !== null ? String(t.registeredPeople) : "0",
+      date: typeof t.date === "string" ? t.date : (t.date ? String(t.date) : ""),
     }))}
   />;
 } 

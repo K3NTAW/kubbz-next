@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_54697d0ecd0990",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE UNIQUE INDEX \"TournamentRegistration_userId_tournamentId_key\" ON \"TournamentRegistration\" USING btree (\"userId\", \"tournamentId\")"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_54697d0ecd0990",
+  "parent": "sql_9d1f71e34b4176",
+  "schema": "public",
+  "startedAt": "2025-05-06T12:44:18.104259Z"
+}

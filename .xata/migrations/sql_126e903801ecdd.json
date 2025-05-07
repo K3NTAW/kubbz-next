@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_126e903801ecdd",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE \"Gallery\" ADD CONSTRAINT \"Gallery_tournamentId_fkey\" FOREIGN KEY (\"tournamentId\") REFERENCES \"Tournament\" (id) ON UPDATE CASCADE ON DELETE SET NULL"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_126e903801ecdd",
+  "parent": "sql_17e56c00b7dbb7",
+  "schema": "public",
+  "startedAt": "2025-05-05T16:03:41.810295Z"
+}

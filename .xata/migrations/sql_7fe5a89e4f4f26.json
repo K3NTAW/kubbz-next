@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_7fe5a89e4f4f26",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE profiles ADD CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_7fe5a89e4f4f26",
+  "parent": "sql_657a37bd3e872d",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:34.447606Z"
+}

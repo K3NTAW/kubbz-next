@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_bc82b1638a5e0a",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE TABLE \"Gallery\" (id text NOT NULL, \"imageUrl\" text NOT NULL, \"userId\" text NOT NULL, \"createdAt\" timestamp(3) NOT NULL DEFAULT current_timestamp, CONSTRAINT \"Gallery_pkey\" PRIMARY KEY (id))"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_bc82b1638a5e0a",
+  "parent": "sql_b58209864f2064",
+  "schema": "public",
+  "startedAt": "2025-05-04T18:05:39.725063Z"
+}

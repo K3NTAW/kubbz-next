@@ -2,6 +2,6 @@
 import TournamentDetailsClient from './TournamentDetailsClient';
 
 export default async function TournamentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <TournamentDetailsClient id={id} />;
+  const { id: xata_id } = await params;
+  return <TournamentDetailsClient xata_id={xata_id} />;
 }

@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_b840bd05a42af7",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE TABLE verification_tokens (identifier text NOT NULL, token text NOT NULL, expires timestamp(3) NOT NULL)"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_b840bd05a42af7",
+  "parent": "sql_30b813149367f4",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:32.171628Z"
+}

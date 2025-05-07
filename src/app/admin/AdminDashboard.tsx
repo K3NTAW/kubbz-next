@@ -25,13 +25,13 @@ function AdminBadge({ role }: { role?: string }) {
 }
 
 type User = {
-  id: string;
+  xata_id: string;
   name?: string;
   email?: string;
   user_metadata?: { role?: string };
 };
 type Tournament = {
-  id: string;
+  xata_id: string;
   title: string;
   name: string;
   description?: string;
@@ -42,9 +42,9 @@ type Tournament = {
   date?: string;
 };
 type Registration = {
-  id: string;
+  xata_id: string;
   name?: string;
-  user: { id: string; name?: string; email?: string };
+  user: { xata_id: string; name?: string; email?: string };
   createdAt: string;
 };
 
@@ -73,28 +73,28 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   }, [userList, userSearch]);
 
   // Handlers
-  const handleDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (xata_id: string) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/users/${xata_id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete user");
-      setUserList((prev) => prev.filter((u) => u.id !== id));
+      setUserList((prev) => prev.filter((u) => u.xata_id !== xata_id));
     } catch {
       setError("Failed to delete user");
     } finally {
       setLoading(false);
     }
   };
-  const handleDeleteTournament = async (id: string) => {
+  const handleDeleteTournament = async (xata_id: string) => {
     if (!confirm("Are you sure you want to delete this tournament?")) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/tournaments/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/tournaments/${xata_id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete tournament");
-      setTournamentList((prev) => prev.filter((t) => t.id !== id));
+      setTournamentList((prev) => prev.filter((t) => t.xata_id !== xata_id));
     } catch {
       setError("Failed to delete tournament");
     } finally {
@@ -133,7 +133,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     setError(null);
     try {
       if (editModal.type === "user") {
-        const res = await fetch(`/api/users/${(editModal.data as User).id}`, {
+        const res = await fetch(`/api/users/${(editModal.data as User).xata_id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -144,9 +144,9 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         });
         if (!res.ok) throw new Error("Failed to update user");
         const { user } = await res.json();
-        setUserList((prev) => prev.map((u) => u.id === user.id ? user : u));
+        setUserList((prev) => prev.map((u) => u.xata_id === user.xata_id ? user : u));
       } else {
-        const res = await fetch(`/api/tournaments/${(editModal.data as Tournament).id}`, {
+        const res = await fetch(`/api/tournaments/${(editModal.data as Tournament).xata_id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -161,7 +161,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         });
         if (!res.ok) throw new Error("Failed to update tournament");
         const { tournament } = await res.json();
-        setTournamentList((prev) => prev.map((t) => t.id === tournament.id ? tournament : t));
+        setTournamentList((prev) => prev.map((t) => t.xata_id === tournament.xata_id ? tournament : t));
       }
       closeEditModal();
     } catch {
@@ -213,7 +213,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     setRegLoading(true);
     setRegError(null);
     try {
-      const res = await fetch(`/api/tournaments/${t.id}?registrations=1`);
+      const res = await fetch(`/api/tournaments/${t.xata_id}?registrations=1`);
       if (!res.ok) throw new Error("Failed to fetch registrations");
       const data = await res.json();
       setRegistrations(data);
@@ -236,7 +236,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     try {
       const res = await fetch(`/api/tournaments/${tournamentId}/register/${regId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete registration");
-      setRegistrations((prev) => prev.filter((r) => r.id !== regId));
+      setRegistrations((prev) => prev.filter((r) => r.xata_id !== regId));
     } catch {
       setRegError("Failed to delete registration");
     } finally {
@@ -263,7 +263,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/users/${userEditOverlay.id}`, {
+      const res = await fetch(`/api/users/${userEditOverlay.xata_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -274,7 +274,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       });
       if (!res.ok) throw new Error("Failed to update user");
       const { user } = await res.json();
-      setUserList((prev) => prev.map((u) => u.id === user.id ? user : u));
+      setUserList((prev) => prev.map((u) => u.xata_id === user.xata_id ? user : u));
       closeUserEditOverlay();
     } catch {
       setError("Failed to update user");
@@ -309,7 +309,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             <Button size="icon" variant="ghost" aria-label="Edit" onClick={() => openUserEditOverlay(info.row.original)}>
               <Edit2 className="w-4 h-4" />
             </Button>
-            <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => handleDeleteUser(info.row.original.id)} disabled={loading}>
+            <Button size="icon" variant="ghost" aria-label="Delete" onClick={() => handleDeleteUser(info.row.original.xata_id)} disabled={loading}>
               <Trash2 className="w-4 h-4 text-red-500" />
             </Button>
           </div>
@@ -397,7 +397,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             </TableHeader>
             <TableBody>
               {tournamentList.map((t) => (
-                <TableRow key={t.id}>
+                <TableRow key={t.xata_id}>
                   <TableCell>{t.title}</TableCell>
                   <TableCell>{t.name}</TableCell>
                   <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
@@ -411,7 +411,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                     <Button size="sm" variant="outline" className="mr-2" onClick={() => openDetailOverlay(t)}>
                       Detail
                     </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.id)} disabled={loading}>
+                    <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.xata_id)} disabled={loading}>
                       Delete
                     </Button>
                   </TableCell>
@@ -566,12 +566,12 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                 </TableHeader>
                 <TableBody>
                   {registrations.map((r) => (
-                    <TableRow key={r.id}>
+                    <TableRow key={r.xata_id}>
                       <TableCell>{r.name}</TableCell>
-                      <TableCell>{r.user?.name || r.user?.id}</TableCell>
+                      <TableCell>{r.user?.name || r.user?.xata_id}</TableCell>
                       <TableCell>{r.user?.email || "-"}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="destructive" onClick={() => handleDeleteRegistration(r.id, detailOverlay.id)} disabled={regLoading}>
+                        <Button size="sm" variant="destructive" onClick={() => handleDeleteRegistration(r.xata_id, detailOverlay.xata_id)} disabled={regLoading}>
                           Delete
                         </Button>
                       </TableCell>

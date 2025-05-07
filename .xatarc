@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Kenta-s-workspace-0recs6.us-east-1.xata.sh/db/kubbz-next",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_e807a3d2301e6f",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE UNIQUE INDEX verification_tokens_token_key ON verification_tokens USING btree (token)"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_e807a3d2301e6f",
+  "parent": "sql_f71db55b32c059",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:33.250624Z"
+}

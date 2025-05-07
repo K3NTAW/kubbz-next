@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
+import { getXataClient } from "@/xata";
 // import { z } from "zod"; // Uncomment if you want to use zod
-
-const prisma = new PrismaClient();
 
 // Optional: zod schema for validation
 // const TournamentUpdateSchema = z.object({
@@ -11,24 +9,14 @@ const prisma = new PrismaClient();
 //   date: z.string().optional(),
 // });
 
-type TournamentUpdateBody = {
-  title?: string;
-  name?: string;
-  date?: string;
-  description?: string;
-  googleMapsUrl?: string;
-  price?: string;
-  maxPeople?: string;
-  registeredPeople?: string;
-};
-
 export async function DELETE(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
-  const { id } = await context.params;
+  const xata = getXataClient();
+  const { id: xata_id } = context.params;
   try {
-    await prisma.tournament.delete({ where: { id } });
+    await xata.db.Tournament.delete(xata_id);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
@@ -40,36 +28,23 @@ export async function DELETE(
 
 export async function PUT(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
-  const { id } = await context.params;
+  const xata = getXataClient();
+  const { id: xata_id } = context.params;
   try {
-    const body: TournamentUpdateBody = await req.json();
-    const {
-      title,
-      name,
-      date,
-      description,
-      googleMapsUrl,
-      price,
-      maxPeople,
-      registeredPeople
-    } = body;
-    const data: Record<string, unknown> = {
-      ...(title !== undefined && { title }),
-      ...(name !== undefined && { name }),
-      ...(date !== undefined && { date: new Date(date) }),
-      ...(description !== undefined && { description }),
-      ...(googleMapsUrl !== undefined && { googleMapsUrl }),
-      ...(price !== undefined && { price: price ? parseFloat(price) : null }),
-      ...(maxPeople !== undefined && { maxPeople: maxPeople ? parseInt(maxPeople, 10) : undefined }),
-      ...(registeredPeople !== undefined && { registeredPeople: registeredPeople ? parseInt(registeredPeople, 10) : undefined }),
-    };
-    const tournament = await prisma.tournament.update({
-      where: { id },
-      data,
+    const body = await req.json();
+    const tournament = await xata.db.Tournament.update(xata_id, body);
+    return NextResponse.json({
+      tournament: {
+        xata_id: tournament?.xata_id,
+        xata_createdat: tournament?.xata_createdat,
+        xata_updatedat: tournament?.xata_updatedat,
+        title: tournament?.title ?? null,
+        name: tournament?.name ?? null,
+        // add other fields as needed
+      }
     });
-    return NextResponse.json({ tournament });
   } catch {
     return NextResponse.json(
       { error: "Failed to update tournament." },
@@ -80,29 +55,23 @@ export async function PUT(
 
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
-  const { id } = await context.params;
-  const prisma = new PrismaClient();
+  const xata = getXataClient();
+  const { id: xata_id } = context.params;
   try {
-    // If ?registrations=1 is present, return registrations for this tournament
-    const url = new URL(req.url);
-    if (url.searchParams.get("registrations") === "1") {
-      const registrations = await prisma.tournamentRegistration.findMany({
-        where: { tournamentId: id },
-        include: {
-          user: { select: { id: true, name: true, email: true } },
-        },
-        orderBy: { createdAt: "asc" },
-      });
-      return NextResponse.json(registrations);
-    }
-    // Otherwise, return the tournament as before
-    const tournament = await prisma.tournament.findUnique({ where: { id } });
+    const tournament = await xata.db.Tournament.read(xata_id);
     if (!tournament) {
       return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
     }
-    return NextResponse.json(tournament);
+    return NextResponse.json({
+      xata_id: tournament.xata_id,
+      xata_createdat: tournament.xata_createdat,
+      xata_updatedat: tournament.xata_updatedat,
+      title: tournament.title,
+      name: tournament.name,
+      // add other fields as needed
+    });
   } catch {
     return NextResponse.json(
       { error: "Fehler beim Laden des Turniers." },

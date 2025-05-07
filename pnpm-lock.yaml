@@ -50,6 +50,9 @@ importers:
       '@uploadthing/react':
         specifier: ^7.3.0
         version: 7.3.0(next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(uploadthing@7.6.0(express@5.1.0)(next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@4.1.5))
+      '@xata.io/client':
+        specifier: ^0.30.1
+        version: 0.30.1(typescript@5.8.3)
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
@@ -1384,6 +1387,11 @@ packages:
 
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
+
+  '@xata.io/client@0.30.1':
+    resolution: {integrity: sha512-dAzDPHmIfenVIpF39m1elmW5ngjWu2mO8ZqJBN7dmYdXr98uhPANfLdVZnc3mUNG+NH37LqY1dSO862hIo2oRw==}
+    peerDependencies:
+      typescript: '>=4.5'
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -4324,6 +4332,10 @@ snapshots:
     dependencies:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
+
+  '@xata.io/client@0.30.1(typescript@5.8.3)':
+    dependencies:
+      typescript: 5.8.3
 
   '@xtuc/ieee754@1.2.0': {}
 

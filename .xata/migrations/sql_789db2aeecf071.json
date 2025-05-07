@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_789db2aeecf071",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE UNIQUE INDEX accounts_provider_provider_account_id_key ON accounts USING btree (provider, provider_account_id)"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_789db2aeecf071",
+  "parent": "sql_58fd5a8cac578f",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:32.726442Z"
+}

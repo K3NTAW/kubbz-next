@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-export default function TournamentDetailsClient({ id }: { id: string }) {
-  const { data: tournament, mutate } = useSWR(`/api/tournaments/${id}`, fetcher);
+export default function TournamentDetailsClient({ xata_id }: { xata_id: string }) {
+  const { data: tournament, mutate } = useSWR(`/api/tournaments/${xata_id}`, fetcher);
   const [users, setUsers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [userInput, setUserInput] = useState("");
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; email: string } | null>(null);
@@ -54,7 +54,7 @@ export default function TournamentDetailsClient({ id }: { id: string }) {
       return;
     }
     startTransition(async () => {
-      const res = await fetch(`/api/tournaments/${id}/register`, {
+      const res = await fetch(`/api/tournaments/${xata_id}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: selectedUser.name }),

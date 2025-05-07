@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_58fd5a8cac578f",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE TABLE profiles (id text NOT NULL, user_id text NOT NULL, username text, full_name text, created_at timestamp(3) NOT NULL DEFAULT current_timestamp, updated_at timestamp(3) NOT NULL, CONSTRAINT profiles_pkey PRIMARY KEY (id))"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_58fd5a8cac578f",
+  "parent": "sql_b840bd05a42af7",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:32.422411Z"
+}

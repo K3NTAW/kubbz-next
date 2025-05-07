@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_f01d8de53939aa",
+    "operations": [
+      {
+        "sql": {
+          "up": "ALTER TABLE \"Gallery\" ADD CONSTRAINT \"Gallery_userId_fkey\" FOREIGN KEY (\"userId\") REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_f01d8de53939aa",
+  "parent": "sql_1929fb004a0b02",
+  "schema": "public",
+  "startedAt": "2025-05-04T18:05:40.317115Z"
+}

@@ -1,0 +1,18 @@
+{
+  "done": true,
+  "migration": {
+    "name": "sql_30b813149367f4",
+    "operations": [
+      {
+        "sql": {
+          "up": "CREATE TABLE users (id text NOT NULL, name text, email text, email_verified timestamp(3), image text, password text, user_metadata jsonb, CONSTRAINT users_pkey PRIMARY KEY (id))"
+        }
+      }
+    ]
+  },
+  "migrationType": "inferred",
+  "name": "sql_30b813149367f4",
+  "parent": "sql_efb683f4ee08b5",
+  "schema": "public",
+  "startedAt": "2025-05-04T17:45:31.854309Z"
+}

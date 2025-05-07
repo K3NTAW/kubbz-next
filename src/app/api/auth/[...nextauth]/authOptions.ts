@@ -3,10 +3,20 @@ import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaClient } from "@/generated/prisma";
 import { compare } from "bcryptjs";
+import { getXataClient } from "@/xata";
 
-const prisma = new PrismaClient();
+// Define a type for session user with xata_id, role, id, name, email
+// All properties are optional to match NextAuth's user shape
+// id is string | undefined for compatibility
+
+type SessionUserWithXataId = {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  xata_id?: string;
+  role?: string;
+};
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -26,16 +36,16 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const user = await prisma.users.findUnique({
-          where: { email: credentials.email },
-        });
+        const xata = getXataClient();
+        const user = await xata.db.users.filter({ email: credentials.email }).getFirst();
         if (!user || !user.password) return null;
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) return null;
         return {
-          id: user.id,
+          id: user.xata_id,
           name: user.name,
           email: user.email,
+          xata_id: user.xata_id,
         };
       },
     }),
@@ -49,20 +59,26 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async session({ session, token }: { session: DefaultSession; token: JWT }) {
-      if (token && session.user) {
-        (session.user as { id?: string }).id = token.sub;
-        // Fetch user from DB to get user_metadata
-        const user = await prisma.users.findUnique({
-          where: { id: token.sub },
-          select: { user_metadata: true }
-        });
+      const userWithXata = session.user as SessionUserWithXataId;
+      if (token && userWithXata) {
+        userWithXata.id = token.sub;
+        // Fetch user from Xata to get user_metadata
+        const xata = getXataClient();
+        let user = await xata.db.users.read(token.sub!);
+        if (!user && userWithXata?.email) {
+          // Fallback: fetch by email
+          user = await xata.db.users.filter({ email: userWithXata.email }).getFirst();
+        }
         if (
           user?.user_metadata &&
           typeof user.user_metadata === "object" &&
           user.user_metadata !== null &&
           "role" in user.user_metadata
         ) {
-          (session.user as { role?: string }).role = (user.user_metadata as { role?: string }).role;
+          userWithXata.role = (user.user_metadata as { role?: string }).role;
+        }
+        if (user) {
+          userWithXata.xata_id = user.xata_id;
         }
       }
       return session;
