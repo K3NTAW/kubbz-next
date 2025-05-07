@@ -5,7 +5,7 @@ export default async function TournamentPage() {
   const xata = getXataClient();
   const tournaments = await xata.db.tournaments
     .select([
-      "xata_id", "title", "name", "description", "google_maps_url", "price",
+      "xata_id", "name", "description", "google_maps_url", "price",
       "max_people", "registered_people", "date"
     ])
     .sort("date", "desc")
@@ -13,7 +13,6 @@ export default async function TournamentPage() {
 
   const mapped: TournamentListType[] = tournaments.map(t => ({
     id: t.xata_id,
-    title: t.title ?? "",
     name: t.name ?? "",
     description: t.description ?? undefined,
     googleMapsUrl: t.google_maps_url ?? "",

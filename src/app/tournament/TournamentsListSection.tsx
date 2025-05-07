@@ -11,7 +11,6 @@ import Link from "next/link";
 
 export type TournamentListType = {
   id: string;
-  title: string;
   name: string;
   description?: string;
   googleMapsUrl?: string;
@@ -137,11 +136,13 @@ export default function TournamentsListSection({ tournaments }: TournamentsListS
                   <div className="relative h-full">
                     <Card className={isFull ? "opacity-60 grayscale pointer-events-none h-full" : "h-full"}>
                       <CardHeader>
-                        <CardTitle>{t.title || t.name}</CardTitle>
+                        <CardTitle>{t.name}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="mb-2 text-sm text-muted-foreground">
-                          {format(parseISO(t.date), "dd.MM.yyyy")}
+                          {t.date && !isNaN(parseISO(t.date).getTime())
+                            ? format(parseISO(t.date), "dd.MM.yyyy")
+                            : "-"}
                         </div>
                         <div className="mb-2 text-sm">
                           <span className="font-medium">Ort:</span> {t.name}

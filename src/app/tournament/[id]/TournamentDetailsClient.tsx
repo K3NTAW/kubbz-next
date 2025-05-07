@@ -78,7 +78,7 @@ export default function TournamentDetailsClient({ xata_id }: { xata_id: string }
     <div className="max-w-xl mx-auto py-16 px-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl mb-2">{tournament.title || tournament.name}</CardTitle>
+          <CardTitle className="text-3xl mb-2">{tournament.name}</CardTitle>
           <div className="text-muted-foreground text-sm">
             {tournament.date ? format(new Date(tournament.date), "dd.MM.yyyy") : null}
           </div>

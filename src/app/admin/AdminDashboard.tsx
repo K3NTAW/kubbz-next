@@ -32,7 +32,6 @@ type User = {
 };
 type Tournament = {
   xata_id: string;
-  title: string;
   name: string;
   description?: string;
   googleMapsUrl?: string;
@@ -386,7 +385,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Price</TableHead>
@@ -398,7 +396,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             <TableBody>
               {tournamentList.map((t) => (
                 <TableRow key={t.xata_id}>
-                  <TableCell>{t.title}</TableCell>
                   <TableCell>{t.name}</TableCell>
                   <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
                   <TableCell>{t.price ?? "-"}</TableCell>
