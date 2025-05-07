@@ -6,14 +6,18 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function GET(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: tournamentId } = params;
+  const awaitedParams = await params;
+  const { id: tournamentId } = awaitedParams;
   try {
+    console.log('[GET] /api/tournaments/[id]/register - tournamentId:', tournamentId);
     const tournament = await xata.db.tournaments.read(tournamentId);
+    console.log('[GET] /api/tournaments/[id]/register - tournament:', tournament);
     if (!tournament) {
       return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
     }
-    return NextResponse.json(tournament);
-  } catch {
+    return NextResponse.json({ ...tournament, id: tournament.xata_id, tournament });
+  } catch (err) {
+    console.error('[GET] /api/tournaments/[id]/register error:', err);
     return NextResponse.json({ error: "Fehler beim Abrufen des Turniers." }, { status: 500 });
   }
 }
@@ -21,10 +25,12 @@ export async function GET(req: NextRequest, { params }: any) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(req: NextRequest, { params }: any) {
   const xata = getXataClient();
-  const { id: tournamentId } = params;
+  const awaitedParams = await params;
+  const { id: tournamentId } = awaitedParams;
 
   // Get user session
   const session = await getServerSession(authOptions);
+  console.log('[POST] /api/tournaments/[id]/register - session:', session);
   const user = session?.user as { xata_id?: string } | undefined;
   if (!session || !user?.xata_id) {
     return NextResponse.json({ error: "Nicht eingeloggt." }, { status: 401 });
@@ -56,7 +62,7 @@ export async function POST(req: NextRequest, { params }: any) {
     }
     // Check if user is already registered for this tournament
     const alreadyRegistered = await xata.db.tournament_registrations.filter({
-      user_id: userXataId,
+      xata_id: userXataId,
       tournament_id: tournamentId,
     }).getFirst();
     if (alreadyRegistered) {
@@ -64,7 +70,7 @@ export async function POST(req: NextRequest, { params }: any) {
     }
     // Register the user
     await xata.db.tournament_registrations.create({
-      user_id: userXataId,
+      xata_id: userXataId,
       tournament_id: tournamentId,
       name,
     });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -30,6 +30,16 @@ type User = {
   email?: string;
   user_metadata?: { role?: string };
 };
+type TournamentApi = {
+  xata_id: string;
+  name: string;
+  description?: string;
+  google_maps_url?: string;
+  price?: string;
+  max_people: number;
+  registered_people: number;
+  date?: string;
+};
 type Tournament = {
   xata_id: string;
   name: string;
@@ -47,12 +57,27 @@ type Registration = {
   createdAt: string;
 };
 
-export default function AdminDashboard({ users, tournaments }: { users: User[]; tournaments: Tournament[] }) {
+export default function AdminDashboard({ users, tournaments }: { users: User[]; tournaments: TournamentApi[] }) {
+  console.log("Initial tournaments prop:", tournaments);
   const [view, setView] = useState<"users" | "tournaments">("users");
   const [userSearch, setUserSearch] = useState("");
   const [userList, setUserList] = useState<User[]>(users);
-  const [tournamentList, setTournamentList] = useState<Tournament[]>(tournaments);
-  const [editModal, setEditModal] = useState<null | { type: "user" | "tournament"; data: User | Tournament }>(null);
+  const [tournamentList, setTournamentList] = useState<Tournament[]>(
+    tournaments.map((t: unknown) => {
+      const apiT = t as TournamentApi;
+      return {
+        xata_id: apiT.xata_id,
+        name: apiT.name,
+        description: apiT.description,
+        googleMapsUrl: apiT.google_maps_url,
+        price: apiT.price,
+        maxPeople: apiT.max_people?.toString() ?? "",
+        registeredPeople: apiT.registered_people?.toString() ?? "",
+        date: apiT.date,
+      };
+    })
+  );
+  const [editModal, setEditModal] = useState<null | { type: "user" | "tournament"; data: User | TournamentApi }>(null);
   const [form, setForm] = useState<Record<string, string>>( {} );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,8 +85,36 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [regLoading, setRegLoading] = useState(false);
   const [regError, setRegError] = useState<string | null>(null);
-  const [detailOverlay, setDetailOverlay] = useState<null | Tournament>(null);
+  const [detailOverlay, setDetailOverlay] = useState<null | TournamentApi>(null);
   const [userEditOverlay, setUserEditOverlay] = useState<null | User>(null);
+
+  // Add a debug log for tournamentList whenever it changes
+  useEffect(() => {
+    console.log("tournamentList state:", tournamentList);
+  }, [tournamentList]);
+
+  // Fetch latest tournaments
+  const refetchTournaments = async () => {
+    const res = await fetch('/api/tournaments');
+    if (res.ok) {
+      const tournaments = await res.json();
+      setTournamentList(
+        tournaments.map((t: unknown) => {
+          const apiT = t as TournamentApi;
+          return {
+            xata_id: apiT.xata_id,
+            name: apiT.name,
+            description: apiT.description,
+            googleMapsUrl: apiT.google_maps_url,
+            price: apiT.price,
+            maxPeople: apiT.max_people?.toString() ?? "",
+            registeredPeople: apiT.registered_people?.toString() ?? "",
+            date: apiT.date,
+          };
+        })
+      );
+    }
+  };
 
   // Filtered users
   const filteredUsers = useMemo(() => {
@@ -79,7 +132,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
 
   // Handlers
   const handleDeleteUser = async (xata_id: string) => {
-    console.log("Delete user called with xata_id:", xata_id);
     if (!xata_id) {
       setError("User ID is missing");
       return;
@@ -122,8 +174,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       description: (data as Tournament).description || "",
       googleMapsUrl: (data as Tournament).googleMapsUrl || "",
       price: (data as Tournament).price || "",
-      maxPeople: (data as Tournament).maxPeople || "",
-      registeredPeople: (data as Tournament).registeredPeople || "",
+      maxPeople: (data as Tournament).maxPeople ?? "",
     });
     setEditModal({ type, data });
     setError(null);
@@ -160,26 +211,35 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         });
         if (!res.ok) throw new Error("Failed to update user");
         const { user } = await res.json();
-        setUserList((prev) => prev.map((u) => u.xata_id === user.xata_id ? user : u));
+        setUserList((prev) => prev.map((u) =>
+          u.xata_id === user.xata_id || u.xata_id === user.id
+            ? {
+                ...u,
+                name: user.name,
+                email: user.email,
+                user_metadata: user.user_metadata,
+                xata_id: user.xata_id || user.id,
+              }
+            : u
+        ));
       } else {
-        const res = await fetch(`/api/tournaments/${(editModal.data as Tournament).xata_id}`, {
+        const res = await fetch(`/api/tournaments/${(editModal.data as TournamentApi).xata_id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: form.name,
-            date: form.date,
+            date: form.date ? new Date(form.date).toISOString() : undefined,
             description: form.description,
-            googleMapsUrl: form.googleMapsUrl,
+            google_maps_url: form.googleMapsUrl,
             price: form.price,
-            maxPeople: form.maxPeople,
-            registeredPeople: form.registeredPeople,
+            max_people: form.maxPeople ? Number(form.maxPeople) : 0,
           }),
         });
         if (!res.ok) throw new Error("Failed to update tournament");
-        const { tournament } = await res.json();
-        setTournamentList((prev) => prev.map((t) => t.xata_id === tournament.xata_id ? tournament : t));
+        await refetchTournaments(); // Refetch the full list after edit
+        closeEditModal();
+        return;
       }
-      closeEditModal();
     } catch {
       setError("Failed to update");
     } finally {
@@ -187,7 +247,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     }
   };
   const openCreateModal = () => {
-    setForm({ name: "", date: "", description: "", googleMapsUrl: "", price: "", maxPeople: "", registeredPeople: "0" });
+    setForm({ name: "", date: "", description: "", googleMapsUrl: "", price: "", maxPeople: "0" });
     setCreateModal(true);
     setError(null);
   };
@@ -206,17 +266,15 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
-          date: form.date,
+          date: form.date ? new Date(form.date).toISOString() : undefined,
           description: form.description,
-          googleMapsUrl: form.googleMapsUrl,
+          google_maps_url: form.googleMapsUrl,
           price: form.price,
-          maxPeople: form.maxPeople,
-          registeredPeople: form.registeredPeople,
+          max_people: form.maxPeople ? Number(form.maxPeople) : 0,
         }),
       });
       if (!res.ok) throw new Error("Failed to create tournament");
-      const { tournament } = await res.json();
-      setTournamentList((prev) => [tournament, ...prev]);
+      await refetchTournaments(); // Force refetch
       closeCreateModal();
     } catch {
       setError("Failed to create tournament");
@@ -224,7 +282,8 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       setLoading(false);
     }
   };
-  const openDetailOverlay = async (t: Tournament) => {
+  const openDetailOverlay = async (t: TournamentApi) => {
+    console.log("openDetailOverlay called with:", t);
     setDetailOverlay(t);
     setRegLoading(true);
     setRegError(null);
@@ -276,7 +335,6 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const handleUserEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userEditOverlay) return;
-    console.log("User edit submit for:", userEditOverlay);
     if (!userEditOverlay.xata_id) {
       setError("User ID is missing");
       return;
@@ -295,7 +353,17 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       });
       if (!res.ok) throw new Error("Failed to update user");
       const { user } = await res.json();
-      setUserList((prev) => prev.map((u) => u.xata_id === user.xata_id ? user : u));
+      setUserList((prev) => prev.map((u) =>
+        u.xata_id === user.xata_id || u.xata_id === user.id
+          ? {
+              ...u,
+              name: user.name,
+              email: user.email,
+              user_metadata: user.user_metadata,
+              xata_id: user.xata_id || user.id,
+            }
+          : u
+      ));
       closeUserEditOverlay();
     } catch {
       setError("Failed to update user");
@@ -304,7 +372,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     }
   };
 
-  // TanStack Table columns
+  // TanStack Table columns for users
   const columns = useMemo<ColumnDef<User, unknown>[]>(
     () => [
       {
@@ -342,6 +410,70 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
     ],
     [loading]
   );
+
+  // TanStack Table columns for tournaments
+  const tournamentColumns = useMemo<ColumnDef<Tournament, unknown>[]>(
+    () => [
+      {
+        header: "Name",
+        accessorKey: "name",
+        cell: info => info.getValue() || "-",
+      },
+      {
+        header: "Date",
+        accessorKey: "date",
+        cell: info => info.getValue() ? new Date(info.getValue() as string).toLocaleDateString() : "-",
+      },
+      {
+        header: "Price",
+        accessorKey: "price",
+        cell: info => info.getValue() || "-",
+      },
+      {
+        header: "Max People",
+        accessorKey: "maxPeople",
+        cell: info => info.getValue() || "-",
+      },
+      {
+        header: "Registered",
+        accessorKey: "registeredPeople",
+        cell: info => info.getValue() || "-",
+      },
+      {
+        header: "Actions",
+        id: "actions",
+        cell: info => (
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", info.row.original)}>
+              Edit
+            </Button>
+            <Button size="sm" variant="outline" className="mr-2" onClick={() => openDetailOverlay({
+              xata_id: info.row.original.xata_id,
+              name: info.row.original.name,
+              description: info.row.original.description,
+              google_maps_url: info.row.original.googleMapsUrl,
+              price: info.row.original.price,
+              max_people: Number(info.row.original.maxPeople),
+              registered_people: 0,
+              date: info.row.original.date,
+            })}>
+              Detail
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(info.row.original.xata_id)} disabled={loading}>
+              Delete
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [loading]
+  );
+
+  const tournamentTable = useReactTable({
+    data: tournamentList,
+    columns: tournamentColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   const table = useReactTable({
     data: filteredUsers,
@@ -407,40 +539,40 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
           <div className="mb-4 flex justify-end">
             <Button onClick={openCreateModal}>Create Tournament</Button>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Max People</TableHead>
-                <TableHead>Registered</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tournamentList.map((t) => (
-                <TableRow key={t.xata_id}>
-                  <TableCell>{t.name}</TableCell>
-                  <TableCell>{t.date ? new Date(t.date).toLocaleDateString() : "-"}</TableCell>
-                  <TableCell>{t.price ?? "-"}</TableCell>
-                  <TableCell>{t.maxPeople}</TableCell>
-                  <TableCell>{t.registeredPeople}</TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" className="mr-2" onClick={() => openEditModal("tournament", t)}>
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="outline" className="mr-2" onClick={() => openDetailOverlay(t)}>
-                      Detail
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleDeleteTournament(t.xata_id)} disabled={loading}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow">
+            <Table>
+              <TableHeader>
+                {tournamentTable.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead key={header.id} className="whitespace-nowrap">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {tournamentTable.getRowModel().rows.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={tournamentColumns.length} className="text-center text-muted-foreground py-8">
+                      No tournaments found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  tournamentTable.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id} className="whitespace-nowrap">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
           {/* Create Tournament Modal */}
           <Sheet open={createModal} onOpenChange={v => { if (!v) closeCreateModal(); }}>
             <SheetContent side="right">
@@ -467,8 +599,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                   />
                 )}
                 <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
-                <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
-                <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
+                <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople ?? ""} onChange={handleFormChange} required />
                 {/* Placeholder for image upload/linking */}
                 <div className="text-xs text-muted-foreground">Image linking coming soon</div>
                 <SheetFooter>
@@ -482,55 +613,44 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
             </SheetContent>
           </Sheet>
           {/* Edit Modal */}
-          <Sheet open={!!editModal} onOpenChange={v => { if (!v) closeEditModal(); }}>
-            <SheetContent side="right">
-              <SheetHeader>
-                <SheetTitle>Edit {editModal?.type === "user" ? "User" : "Tournament"}</SheetTitle>
-                <SheetDescription>
-                  Update the {editModal?.type === "user" ? "user's" : "tournament's"} details below.
-                </SheetDescription>
-              </SheetHeader>
-              <form onSubmit={handleEditSubmit} className="flex flex-col gap-4 p-4">
-                {editModal?.type === "user" ? (
-                  <>
-                    <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
-                    <Input name="email" placeholder="Email" value={form.email || ""} onChange={handleFormChange} required />
-                    <Input name="role" placeholder="Role" value={form.role || ""} onChange={handleFormChange} required />
-                  </>
-                ) : (
-                  <>
-                    <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
-                    <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
-                    <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
-                    <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
-                    {form.googleMapsUrl && (
-                      <iframe
-                        src={form.googleMapsUrl}
-                        width="100%"
-                        height="200"
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-                    )}
-                    <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
-                    <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople || ""} onChange={handleFormChange} required />
-                    <Input name="registeredPeople" placeholder="Registered People" type="number" value={form.registeredPeople || "0"} onChange={handleFormChange} />
-                    {/* Placeholder for image upload/linking */}
-                    <div className="text-xs text-muted-foreground">Image linking coming soon</div>
-                  </>
-                )}
-                <SheetFooter>
-                  <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
-                  <SheetClose asChild>
+          {editModal && editModal.type === "tournament" && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="relative bg-white dark:bg-zinc-900 rounded-lg shadow-xl w-full max-w-md mx-auto p-6 overflow-y-auto max-h-[90vh]">
+                <button
+                  className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                  onClick={closeEditModal}
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+                <div className="font-bold text-lg mb-2">Edit Tournament</div>
+                <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
+                  <Input name="name" placeholder="Name" value={form.name || ""} onChange={handleFormChange} required />
+                  <Input name="date" type="date" value={form.date || ""} onChange={handleFormChange} required />
+                  <Input name="description" placeholder="Description" value={form.description || ""} onChange={handleFormChange} />
+                  <Input name="googleMapsUrl" placeholder="Google Maps Link" value={form.googleMapsUrl || ""} onChange={handleFormChange} />
+                  {form.googleMapsUrl && (
+                    <iframe
+                      src={form.googleMapsUrl}
+                      width="100%"
+                      height="200"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  )}
+                  <Input name="price" placeholder="Price" type="number" value={form.price || ""} onChange={handleFormChange} />
+                  <Input name="maxPeople" placeholder="Max People" type="number" value={form.maxPeople ?? ""} onChange={handleFormChange} required />
+                  <div className="flex gap-2 mt-2">
+                    <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save"}</Button>
                     <Button type="button" variant="outline" onClick={closeEditModal}>Cancel</Button>
-                  </SheetClose>
-                </SheetFooter>
-                {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-              </form>
-            </SheetContent>
-          </Sheet>
+                  </div>
+                  {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+                </form>
+              </div>
+            </div>
+          )}
         </>
       )}
       {/* Centered Overlay for User Edit (always available) */}
@@ -574,9 +694,9 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
               <div>Loading...</div>
             ) : regError ? (
               <div className="text-red-500">{regError}</div>
-            ) : registrations.length === 0 ? (
+            ) : Array.isArray(registrations) && registrations.length === 0 ? (
               <div>No registrations yet.</div>
-            ) : (
+            ) : Array.isArray(registrations) ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -601,6 +721,8 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                   ))}
                 </TableBody>
               </Table>
+            ) : (
+              <div>Registrations data is not available.</div>
             )}
           </div>
         </div>

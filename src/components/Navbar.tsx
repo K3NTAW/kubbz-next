@@ -27,7 +27,6 @@ import Link from "next/link";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
-  console.log('Navbar session:', session); // Debug session
   const isAdmin = session?.user?.is_admin === true;
   const menuItems = [
     { title: "Home", url: "/", icon: Home },

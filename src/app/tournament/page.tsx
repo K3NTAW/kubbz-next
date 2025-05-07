@@ -11,8 +11,11 @@ export default async function TournamentPage() {
     .sort("date", "desc")
     .getAll();
 
+  console.log("All tournaments fetched from Xata:", tournaments);
+
   const mapped: TournamentListType[] = tournaments.map(t => ({
-    id: t.xata_id,
+    id: t.id,
+    xata_id: t.id,
     name: t.name ?? "",
     description: t.description ?? undefined,
     googleMapsUrl: t.google_maps_url ?? "",

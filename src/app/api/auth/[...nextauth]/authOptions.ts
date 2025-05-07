@@ -46,26 +46,32 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      console.log("SESSION CALLBACK:", { session, token });
       return {
         ...session,
         user: {
           ...session.user,
           is_admin: token.is_admin,
+          xata_id: token.xata_id || token.id,
         },
       };
     },
     async jwt({ token, user }) {
       if (user?.email) {
         const xata = getXataClient();
-        const dbUser = await xata.db.users.filter({ email: user.email }).getFirst();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (dbUser && typeof (dbUser as any).is_admin === 'boolean') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          token.is_admin = (dbUser as any).is_admin;
+        // Try to find the user in Xata
+        let dbUser = await xata.db.users.filter({ email: user.email }).getFirst();
+        // If not found (e.g., OAuth login), create the user in Xata
+        if (!dbUser) {
+          dbUser = await xata.db.users.create({
+            email: user.email,
+            name: user.name,
+          });
+        }
+        token.xata_id = dbUser.xata_id || dbUser.id;
+        if (typeof dbUser.is_admin === 'boolean') {
+          token.is_admin = dbUser.is_admin;
         }
       }
-      console.log("JWT TOKEN:", token);
       return token;
     },
   },

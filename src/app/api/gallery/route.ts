@@ -11,13 +11,12 @@ export const config = {
 
 export async function GET() {
   const xata = getXataClient();
-  const images = await xata.db.gallery.select(["xata_id", "image", "user_id", "tournament_id"]).getAll();
+  const images = await xata.db.gallery.select(["xata_id", "image", "xata_id", "tournament_id"]).getAll();
   console.log("Fetched images from Xata:", images);
   // Map to include image URL
   const result = images.map(img => ({
-    xata_id: img.id,
+    xata_id: img.xata_id,
     image_url: img.image?.url ?? null,
-    user_id: img.user_id,
     tournament_id: img.tournament_id,
   }));
   return NextResponse.json(result);
@@ -48,13 +47,12 @@ export async function POST(req: NextRequest) {
       base64Content,
       enablePublicUrl: true,
     },
-    user_id: user.xata_id,
+    xata_id: user.xata_id,
     tournament_id: tournament_id || null,
   });
   return NextResponse.json({
     xata_id: record.xata_id,
     image_url: record.image?.url ?? null,
-    user_id: record.user_id,
     tournament_id: record.tournament_id,
   });
 } 

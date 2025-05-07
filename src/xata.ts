@@ -16,15 +16,7 @@ const tables = [
         definition: "CHECK ((length(xata_id) < 256))",
       },
     },
-    foreignKeys: {
-      accounts_user_id_fkey: {
-        name: "accounts_user_id_fkey",
-        columns: ["user_id"],
-        referencedTable: "users",
-        referencedColumns: ["xata_id"],
-        onDelete: "CASCADE",
-      },
-    },
+    foreignKeys: {},
     primaryKey: [],
     uniqueConstraints: {
       _pgroll_new_accounts_xata_id_key: {
@@ -118,15 +110,6 @@ const tables = [
         comment: "",
       },
       {
-        name: "user_id",
-        type: "link",
-        link: { table: "users" },
-        notNull: true,
-        unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
         name: "xata_createdat",
         type: "datetime",
         notNull: true,
@@ -177,13 +160,6 @@ const tables = [
         referencedColumns: ["xata_id"],
         onDelete: "SET NULL",
       },
-      gallery_user_id_fkey: {
-        name: "gallery_user_id_fkey",
-        columns: ["user_id"],
-        referencedTable: "users",
-        referencedColumns: ["xata_id"],
-        onDelete: "SET NULL",
-      },
     },
     primaryKey: [],
     uniqueConstraints: {
@@ -200,21 +176,12 @@ const tables = [
         notNull: false,
         unique: false,
         defaultValue: null,
-        comment: '{"xata.file.dpa":false}',
+        comment: '{"xata.file.dpa":true}',
       },
       {
         name: "tournament_id",
         type: "link",
         link: { table: "tournaments" },
-        notNull: false,
-        unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
-        name: "user_id",
-        type: "link",
-        link: { table: "users" },
         notNull: false,
         unique: false,
         defaultValue: null,
@@ -263,24 +230,12 @@ const tables = [
         definition: "CHECK ((length(xata_id) < 256))",
       },
     },
-    foreignKeys: {
-      profiles_user_id_fkey: {
-        name: "profiles_user_id_fkey",
-        columns: ["user_id"],
-        referencedTable: "users",
-        referencedColumns: ["xata_id"],
-        onDelete: "CASCADE",
-      },
-    },
+    foreignKeys: {},
     primaryKey: [],
     uniqueConstraints: {
       _pgroll_new_profiles_xata_id_key: {
         name: "_pgroll_new_profiles_xata_id_key",
         columns: ["xata_id"],
-      },
-      profiles_user_id_key: {
-        name: "profiles_user_id_key",
-        columns: ["user_id"],
       },
       profiles_username_key: {
         name: "profiles_username_key",
@@ -293,15 +248,6 @@ const tables = [
         type: "text",
         notNull: false,
         unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
-        name: "user_id",
-        type: "link",
-        link: { table: "users" },
-        notNull: true,
-        unique: true,
         defaultValue: null,
         comment: "",
       },
@@ -356,15 +302,7 @@ const tables = [
         definition: "CHECK ((length(xata_id) < 256))",
       },
     },
-    foreignKeys: {
-      sessions_user_id_fkey: {
-        name: "sessions_user_id_fkey",
-        columns: ["user_id"],
-        referencedTable: "users",
-        referencedColumns: ["xata_id"],
-        onDelete: "CASCADE",
-      },
-    },
+    foreignKeys: {},
     primaryKey: [],
     uniqueConstraints: {
       _pgroll_new_sessions_xata_id_key: {
@@ -390,15 +328,6 @@ const tables = [
         type: "text",
         notNull: true,
         unique: true,
-        defaultValue: null,
-        comment: "",
-      },
-      {
-        name: "user_id",
-        type: "link",
-        link: { table: "users" },
-        notNull: true,
-        unique: false,
         defaultValue: null,
         comment: "",
       },
@@ -453,13 +382,6 @@ const tables = [
         referencedColumns: ["xata_id"],
         onDelete: "CASCADE",
       },
-      tournament_registrations_user_id_fkey: {
-        name: "tournament_registrations_user_id_fkey",
-        columns: ["user_id"],
-        referencedTable: "users",
-        referencedColumns: ["xata_id"],
-        onDelete: "CASCADE",
-      },
     },
     primaryKey: [],
     uniqueConstraints: {
@@ -481,15 +403,6 @@ const tables = [
         name: "tournament_id",
         type: "link",
         link: { table: "tournaments" },
-        notNull: false,
-        unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
-        name: "user_id",
-        type: "link",
-        link: { table: "users" },
         notNull: false,
         unique: false,
         defaultValue: null,
@@ -621,14 +534,6 @@ const tables = [
         comment: "",
       },
       {
-        name: "title",
-        type: "text",
-        notNull: true,
-        unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
         name: "xata_createdat",
         type: "datetime",
         notNull: true,
@@ -695,6 +600,14 @@ const tables = [
         notNull: false,
         unique: false,
         defaultValue: null,
+        comment: "",
+      },
+      {
+        name: "is_admin",
+        type: "bool",
+        notNull: false,
+        unique: false,
+        defaultValue: "false",
         comment: "",
       },
       {

@@ -9,7 +9,6 @@ export default async function AdminPage() {
   const rawHeaders = await headers();
   const req = new NextRequest("http://localhost", { headers: rawHeaders });
   const token = await getToken({ req });
-  console.log("SERVER TOKEN:", JSON.stringify(token, null, 2)); // Debug log
   const isAdmin = token?.is_admin === true;
   if (!isAdmin) {
     redirect("/");
@@ -31,13 +30,12 @@ export default async function AdminPage() {
     }))}
     tournaments={tournaments.map(t => ({
       xata_id: t.id,
-      title: t.title ?? "",
       name: t.name ?? "",
       description: t.description ?? undefined,
-      googleMapsUrl: t.google_maps_url ?? "",
+      google_maps_url: t.google_maps_url ?? "",
       price: t.price !== undefined && t.price !== null ? String(t.price) : "",
-      maxPeople: t.max_people !== undefined && t.max_people !== null ? String(t.max_people) : "",
-      registeredPeople: t.registered_people !== undefined && t.registered_people !== null ? String(t.registered_people) : "0",
+      max_people: t.max_people !== undefined && t.max_people !== null ? t.max_people : 0,
+      registered_people: t.registered_people !== undefined && t.registered_people !== null ? t.registered_people : 0,
       date: typeof t.date === "string" ? t.date : (t.date ? String(t.date) : ""),
     }))}
   />;
