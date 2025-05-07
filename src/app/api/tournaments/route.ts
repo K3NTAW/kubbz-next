@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getXataClient } from "@/xata";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(req: NextRequest) {
   const xata = getXataClient();
   try {

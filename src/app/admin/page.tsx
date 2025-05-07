@@ -1,12 +1,19 @@
-// import { getServerSession } from "next-auth";
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { getXataClient } from "@/xata";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function AdminPage() {
-  // const session = await getServerSession();
-  // if (!session || session.user?.role !== "admin") {
-  //   redirect("/");
-  // }
+  const rawHeaders = await headers();
+  const req = new NextRequest("http://localhost", { headers: rawHeaders });
+  const token = await getToken({ req });
+  console.log("SERVER TOKEN:", JSON.stringify(token, null, 2)); // Debug log
+  const isAdmin = token?.is_admin === true;
+  if (!isAdmin) {
+    redirect("/");
+  }
   const xata = getXataClient();
   // Fetch users
   const users = await xata.db.users.getAll();

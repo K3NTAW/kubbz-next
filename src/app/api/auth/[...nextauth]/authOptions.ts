@@ -1,4 +1,4 @@
-import type { AuthOptions, SessionStrategy, DefaultSession } from "next-auth";
+import type { AuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -45,28 +45,28 @@ export const authOptions: AuthOptions = {
     error: "/login", // Error code passed in query string as ?error=
   },
   callbacks: {
-    async session({ session }: { session: DefaultSession }) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const userWithXata = session.user as any;
-      if (userWithXata?.email) {
+    async session({ session, token }) {
+      console.log("SESSION CALLBACK:", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          is_admin: token.is_admin,
+        },
+      };
+    },
+    async jwt({ token, user }) {
+      if (user?.email) {
         const xata = getXataClient();
+        const dbUser = await xata.db.users.filter({ email: user.email }).getFirst();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const user = await (xata.db.users.filter({ email: userWithXata.email } as any).getFirst());
-        console.log("Xata user by email:", user);
-        if (
-          user &&
-          user.user_metadata &&
-          typeof user.user_metadata === "object" &&
-          user.user_metadata !== null &&
-          "role" in user.user_metadata
-        ) {
-          userWithXata.role = user.user_metadata.role;
-        }
-        if (user) {
-          userWithXata.xata_id = user.id;
+        if (dbUser && typeof (dbUser as any).is_admin === 'boolean') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          token.is_admin = (dbUser as any).is_admin;
         }
       }
-      return session;
+      console.log("JWT TOKEN:", token);
+      return token;
     },
   },
 }; 
