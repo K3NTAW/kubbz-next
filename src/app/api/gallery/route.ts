@@ -11,11 +11,12 @@ export const config = {
 
 export async function GET() {
   const xata = getXataClient();
-  const images = await xata.db.gallery.select(["xata_id", "image", "xata_id", "tournament_id"]).getAll();
-  console.log("Fetched images from Xata:", images);
-  // Map to include image URL
+  const images = await xata.db.gallery.select(["id", "image", "tournament_id"]).getAll();
+  // console.log("Fetched images from Xata:", images); // Keep for debugging if needed
+
   const result = images.map(img => ({
-    xata_id: img.xata_id,
+    id: img.id,             // Use img.id as it reliably contains the PK
+    xata_id: img.id,        // Also populate xata_id from img.id for frontend consistency
     image_url: img.image?.url ?? null,
     tournament_id: img.tournament_id,
   }));
