@@ -24,10 +24,14 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-  const user = session?.user as { xata_id?: string };
+  
+  // Explicitly type session.user to include xata_id for this route
+  const user = session?.user as { name?: string | null; email?: string | null; image?: string | null; is_admin?: boolean; xata_id?: string };
+
   if (!session || !user?.xata_id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const userXataId = user.xata_id; // Now this should be fine
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
@@ -40,19 +44,26 @@ export async function POST(req: NextRequest) {
 
   const tournament_id = formData.get("tournament_id") as string | null;
   const xata = getXataClient();
-  const record = await xata.db.gallery.create({
-    image: {
-      name: file.name,
-      mediaType: file.type,
-      base64Content,
-      enablePublicUrl: true,
-    },
-    xata_id: user.xata_id,
-    tournament_id: tournament_id || null,
-  });
-  return NextResponse.json({
-    xata_id: record.xata_id,
-    image_url: record.image?.url ?? null,
-    tournament_id: record.tournament_id,
-  });
+  try {
+    const record = await xata.db.gallery.create({
+      image: {
+        name: file.name,
+        mediaType: file.type,
+        base64Content,
+        enablePublicUrl: true,
+      },
+      user_id: userXataId, // Store the uploading user's ID
+      tournament_id: tournament_id || undefined, // Use undefined for optional links
+      // Xata will auto-generate the primary key (xata_id for this table)
+    });
+    return NextResponse.json({
+      id: record.id, // Prefer sending back the actual record id
+      xata_id: record.xata_id, // Keep for consistency if frontend expects it
+      image_url: record.image?.url ?? null,
+      tournament_id: record.tournament_id,
+    });
+  } catch (error) {
+    console.error("Error creating gallery record:", error);
+    return NextResponse.json({ error: "Failed to create gallery record" }, { status: 500 });
+  }
 } 

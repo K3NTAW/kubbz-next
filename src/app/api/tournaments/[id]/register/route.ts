@@ -28,24 +28,26 @@ export async function POST(req: NextRequest, { params }: any) {
   const awaitedParams = await params;
   const { id: tournamentId } = awaitedParams;
 
-  // Get user session
   const session = await getServerSession(authOptions);
-  console.log('[POST] /api/tournaments/[id]/register - session:', session);
-  const user = session?.user as { xata_id?: string } | undefined;
-  if (!session || !user?.xata_id) {
-    return NextResponse.json({ error: "Nicht eingeloggt." }, { status: 401 });
-  }
-  const userXataId = user.xata_id;
+  // console.log('[DEBUG] /api/tournaments/[id]/register POST session:', session);
+  
+  // Explicitly type session.user to include xata_id for this route
+  const user = session?.user as { name?: string | null; email?: string | null; image?: string | null; is_admin?: boolean; xata_id?: string };
 
-  let name: string;
+  if (!session || !user?.xata_id) {
+    return NextResponse.json({ error: "Nicht eingeloggt oder Benutzer-ID fehlt." }, { status: 401 });
+  }
+  const userXataId = user.xata_id; // Now this should be fine
+
+  let nameFromBody: string;
   try {
     const body = await req.json();
-    name = (body.name || "").trim();
-    if (!name) {
+    nameFromBody = (body.name || "").trim();
+    if (!nameFromBody) {
       return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
     }
   } catch {
-    return NextResponse.json({ error: "Ungültige Anfrage." }, { status: 400 });
+    return NextResponse.json({ error: "Ungültige Anfrage-Body." }, { status: 400 });
   }
 
   try {
@@ -53,6 +55,7 @@ export async function POST(req: NextRequest, { params }: any) {
     if (!tournament) {
       return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
     }
+
     if (
       typeof tournament.max_people === "number" &&
       typeof tournament.registered_people === "number" &&
@@ -60,26 +63,30 @@ export async function POST(req: NextRequest, { params }: any) {
     ) {
       return NextResponse.json({ error: "Das Turnier ist bereits voll." }, { status: 400 });
     }
-    // Check if user is already registered for this tournament
+
     const alreadyRegistered = await xata.db.tournament_registrations.filter({
-      xata_id: userXataId,
+      user_id: userXataId, // Filter by the user_id column
       tournament_id: tournamentId,
     }).getFirst();
+
     if (alreadyRegistered) {
       return NextResponse.json({ error: "Du bist bereits für dieses Turnier registriert." }, { status: 400 });
     }
-    // Register the user
+
     await xata.db.tournament_registrations.create({
-      xata_id: userXataId,
+      user_id: userXataId, // Store user's xata_id in the user_id column
       tournament_id: tournamentId,
-      name,
+      name: nameFromBody, // Name of the person registering (from request body)
+      // Xata will auto-generate the primary key (xata_id for this table)
     });
-    // Update registered_people count
+
     await xata.db.tournaments.update(tournamentId, {
       registered_people: (tournament.registered_people || 0) + 1,
     });
+
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error('[REGISTRATION ERROR] Details:', err);
     return NextResponse.json({ error: "Fehler bei der Registrierung." }, { status: 500 });
   }
 } 
