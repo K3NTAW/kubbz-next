@@ -62,13 +62,28 @@ export async function GET(req: NextRequest, { params }: any) {
     const registrationsParam = url.searchParams.get("registrations");
     if (registrationsParam === "1") {
       // Return registrations for this tournament
-      const registrations = await xata.db.tournament_registrations.filter({ tournament_id: id }).getAll();
-      // Map to include both xata_id and id
-      const mapped = registrations.map(r => ({
-        ...r,
-        id: r.xata_id,
-      }));
-      return NextResponse.json(mapped);
+      const rawRegistrations = await xata.db.tournament_registrations
+        .filter({ tournament_id: id })
+        .getAll();
+      
+      console.log("[API DEBUG /tournaments/[id] route] Raw registrations from Xata:", JSON.stringify(rawRegistrations, null, 2));
+
+      const mappedRegistrations = rawRegistrations.map(reg => {
+        console.log("[API DEBUG /tournaments/[id] route] Processing registration for mapping:", JSON.stringify(reg, null, 2));
+        return {
+          xata_id: reg.id, // Use reg.id as it reliably contains the PK
+          id: reg.id,      // Also use reg.id here
+          name: reg.name,
+          user_id: reg.user_id,
+          user: {
+            xata_id: reg.user_id, 
+            name: reg.name, 
+            email: undefined, 
+          },
+          createdAt: reg.xata_createdat ? reg.xata_createdat.toISOString() : new Date().toISOString(),
+        };
+      });
+      return NextResponse.json(mappedRegistrations);
     }
     const tournament = await xata.db.tournaments.read(id);
     if (!tournament) {

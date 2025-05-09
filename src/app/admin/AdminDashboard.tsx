@@ -88,6 +88,10 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
   const [detailOverlay, setDetailOverlay] = useState<null | TournamentApi>(null);
   const [userEditOverlay, setUserEditOverlay] = useState<null | User>(null);
 
+  useEffect(() => {
+    console.log("[DEBUG] AdminDashboard registrations state:", registrations);
+  }, [registrations]);
+
   // Add a debug log for tournamentList whenever it changes
   useEffect(() => {
     console.log("tournamentList state:", tournamentList);
@@ -291,6 +295,7 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
       const res = await fetch(`/api/tournaments/${t.xata_id}?registrations=1`);
       if (!res.ok) throw new Error("Failed to fetch registrations");
       const data = await res.json();
+      console.log("[DEBUG] AdminDashboard openDetailOverlay - data from API:", data);
       setRegistrations(data);
     } catch {
       setRegError("Failed to fetch registrations");
@@ -707,18 +712,21 @@ export default function AdminDashboard({ users, tournaments }: { users: User[]; 
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {registrations.map((r) => (
-                    <TableRow key={r.xata_id}>
-                      <TableCell>{r.name}</TableCell>
-                      <TableCell>{r.user?.name || r.user?.xata_id}</TableCell>
-                      <TableCell>{r.user?.email || "-"}</TableCell>
-                      <TableCell>
-                        <Button size="sm" variant="destructive" onClick={() => handleDeleteRegistration(r.xata_id, detailOverlay.xata_id)} disabled={regLoading}>
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {registrations.map((r) => {
+                    console.log("[DEBUG] AdminDashboard - Current registration object (r) in map:", r);
+                    return (
+                      <TableRow key={r.xata_id}>
+                        <TableCell>{r.name}</TableCell>
+                        <TableCell>{r.user?.name || r.user?.xata_id}</TableCell>
+                        <TableCell>{r.user?.email || "-"}</TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="destructive" onClick={() => handleDeleteRegistration(r.xata_id, detailOverlay.xata_id)} disabled={regLoading}>
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             ) : (
