@@ -7,7 +7,11 @@ export async function GET() {
     if (!process.env.DATABASE_URL) {
       console.error("DATABASE_URL is not set");
       return NextResponse.json(
-        { error: "Database configuration error" },
+        { 
+          error: "Database configuration error",
+          code: "MISSING_DATABASE_URL",
+          message: "DATABASE_URL environment variable is not set"
+        },
         { status: 500 }
       );
     }
@@ -15,6 +19,11 @@ export async function GET() {
     const tournaments = await prisma.tournament.findMany({
       include: {
         registrations: {
+          where: {
+            status: {
+              in: ["CONFIRMED", "PENDING"],
+            },
+          },
           include: {
             user: {
               select: {
@@ -23,14 +32,6 @@ export async function GET() {
                 email: true,
               },
             },
-          },
-          where: {
-            status: {
-              in: ["CONFIRMED", "PENDING"],
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
           },
         },
         winner: {
@@ -45,19 +46,34 @@ export async function GET() {
         date: "asc",
       },
     });
+    
+    // Sort registrations client-side if needed
+    tournaments.forEach(tournament => {
+      if (tournament.registrations) {
+        tournament.registrations.sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+    });
 
     return NextResponse.json(tournaments);
   } catch (error: any) {
+    // Log full error details for debugging
     console.error("Error fetching tournaments:", error);
     console.error("Error details:", {
       message: error?.message,
       code: error?.code,
       meta: error?.meta,
+      stack: error?.stack,
     });
+    
+    // Return error with code for better debugging (even in production)
     return NextResponse.json(
       { 
         error: "Fehler beim Laden der Turniere",
-        details: process.env.NODE_ENV === "development" ? error?.message : undefined,
+        code: error?.code || "UNKNOWN_ERROR",
+        // Include message in production for debugging (can remove later)
+        message: error?.message || "Unknown error occurred",
       },
       { status: 500 }
     );

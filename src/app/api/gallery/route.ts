@@ -7,7 +7,11 @@ export async function GET() {
     if (!process.env.DATABASE_URL) {
       console.error("DATABASE_URL is not set");
       return NextResponse.json(
-        { error: "Database configuration error" },
+        { 
+          error: "Database configuration error",
+          code: "MISSING_DATABASE_URL",
+          message: "DATABASE_URL environment variable is not set"
+        },
         { status: 500 }
       );
     }
@@ -20,16 +24,22 @@ export async function GET() {
 
     return NextResponse.json(images);
   } catch (error: any) {
+    // Log full error details for debugging
     console.error("Error fetching gallery images:", error);
     console.error("Error details:", {
       message: error?.message,
       code: error?.code,
       meta: error?.meta,
+      stack: error?.stack,
     });
+    
+    // Return error with code for better debugging (even in production)
     return NextResponse.json(
       { 
         error: "Fehler beim Laden der Galerie",
-        details: process.env.NODE_ENV === "development" ? error?.message : undefined,
+        code: error?.code || "UNKNOWN_ERROR",
+        // Include message in production for debugging (can remove later)
+        message: error?.message || "Unknown error occurred",
       },
       { status: 500 }
     );
