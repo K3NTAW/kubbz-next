@@ -3,6 +3,15 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    // Check if DATABASE_URL is set
+    if (!process.env.DATABASE_URL) {
+      console.error("DATABASE_URL is not set");
+      return NextResponse.json(
+        { error: "Database configuration error" },
+        { status: 500 }
+      );
+    }
+
     const tournaments = await prisma.tournament.findMany({
       include: {
         registrations: {
@@ -20,6 +29,9 @@ export async function GET() {
               in: ["CONFIRMED", "PENDING"],
             },
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         },
         winner: {
           select: {
@@ -35,10 +47,18 @@ export async function GET() {
     });
 
     return NextResponse.json(tournaments);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching tournaments:", error);
+    console.error("Error details:", {
+      message: error?.message,
+      code: error?.code,
+      meta: error?.meta,
+    });
     return NextResponse.json(
-      { error: "Fehler beim Laden der Turniere" },
+      { 
+        error: "Fehler beim Laden der Turniere",
+        details: process.env.NODE_ENV === "development" ? error?.message : undefined,
+      },
       { status: 500 }
     );
   }
