@@ -1,71 +1,167 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getXataClient } from "@/xata";
-// import { z } from "zod"; // Uncomment if you want to use zod
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
-// Optional: zod schema for validation
-// const UserUpdateSchema = z.object({
-//   name: z.string().optional(),
-//   email: z.string().optional(),
-//   user_metadata: z.object({ role: z.string().optional() }).optional(),
-// });
+const updateUserSchema = z.object({
+  name: z.string().min(2).optional(),
+  email: z.string().email().optional(),
+  role: z.enum(["USER", "ADMIN", "MODERATOR"]).optional(),
+  wins: z.number().int().min(0).optional(),
+  trophies: z.number().int().min(0).optional(),
+});
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function GET(req: NextRequest, { params }: { params: any }) {
-  const awaitedParams = await params;
-  const id = awaitedParams.id;
-  if (!id) {
-    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
-  }
-  const xata = getXataClient();
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const user = await xata.db.users.read(id);
-    if (!user) {
-      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    const session = await getServerSession(authOptions);
+    const { id } = await params;
+
+    if (!session?.user || (session.user.id !== id && session.user.role !== "ADMIN")) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
     }
-    return NextResponse.json(user);
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch user." }, { status: 500 });
-  }
-}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function DELETE(req: NextRequest, { params }: { params: any }) {
-  const awaitedParams = await params;
-  const id = awaitedParams.id;
-  if (!id) {
-    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
-  }
-  const xata = getXataClient();
-  try {
-    await xata.db.users.delete(id);
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Failed to delete user." }, { status: 500 });
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PUT(req: NextRequest, { params }: { params: any }) {
-  const awaitedParams = await params;
-  const id = awaitedParams.id;
-  if (!id) {
-    return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
-  }
-  const xata = getXataClient();
-  try {
-    const body = await req.json();
-    // const data = UserUpdateSchema.parse(body); // Use if validating
-    const user = await xata.db.users.update(id, body);
-    return NextResponse.json({
-      user: {
-        ...user,
-        xata_id: user?.xata_id || user?.id,
-      }
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        image: true,
+        wins: true,
+        trophies: true,
+        createdAt: true,
+      },
     });
-  } catch {
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Benutzer nicht gefunden" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
     return NextResponse.json(
-      { error: "Failed to update user." },
+      { error: "Fehler beim Laden des Benutzers" },
       { status: 500 }
     );
   }
-} 
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    const { id } = await params;
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
+    }
+
+    // Users can update their own profile, admins can update anyone
+    const isOwnProfile = session.user.id === id;
+    const isAdmin = session.user.role === "ADMIN";
+
+    if (!isOwnProfile && !isAdmin) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const validatedData = updateUserSchema.parse(body);
+
+    // Non-admins can only update name and email
+    if (!isAdmin) {
+      delete validatedData.role;
+      delete validatedData.wins;
+      delete validatedData.trophies;
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: validatedData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        image: true,
+        wins: true,
+        trophies: true,
+      },
+    });
+
+    return NextResponse.json(user);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Ungültige Eingabedaten", details: error.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error("Error updating user:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Aktualisieren des Benutzers" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    const { id } = await params;
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
+    }
+
+    // Users can delete their own account, admins can delete anyone
+    const isOwnProfile = session.user.id === id;
+    const isAdmin = session.user.role === "ADMIN";
+
+    if (!isOwnProfile && !isAdmin) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
+    }
+
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Benutzer gelöscht" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Löschen des Benutzers" },
+      { status: 500 }
+    );
+  }
+}
+

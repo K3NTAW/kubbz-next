@@ -1,192 +1,159 @@
 "use client";
 
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { GalleryHorizontal, Home, Trophy, Shield, Menu, User, LogIn, UserPlus } from "lucide-react";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import Link from "next/link";
+import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User, LogOut, Settings, Trophy, Moon, Sun, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
 
-export default function Navbar() {
+export function Navbar() {
   const { data: session, status } = useSession();
-  const isAdmin = session?.user?.is_admin === true;
-  const menuItems = [
-    { title: "Home", url: "/", icon: Home },
-    { title: "Gallery", url: "/gallery", icon: GalleryHorizontal },
-    { title: "Tournaments", url: "/tournament", icon: Trophy },
-    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
-  ];
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  type ProfileItem = {
-    title: string;
-    url: string;
-    icon: React.ElementType;
-    onClick?: () => void;
-  };
-  let profileItems: ProfileItem[];
-
-  // Profile section logic
-  if (status === "loading") {
-    profileItems = [];
-  } else if (session && session.user) {
-    profileItems = [
-      {
-        title: (session.user.name as string) || (session.user.email as string) || "",
-        url: "/profile",
-        icon: User,
-      },
-      {
-        title: "Sign out",
-        url: "#",
-        icon: LogIn,
-        onClick: () => signOut({ callbackUrl: "/" }),
-      },
-    ];
-  } else {
-    profileItems = [
-      { title: "Login", url: "/login", icon: LogIn },
-      { title: "Register", url: "/register", icon: UserPlus },
-    ];
-  }
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
-    <header className={cn("w-full border-b bg-background z-50 fixed top-0 left-0")}> 
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-semibold">Kubbz</span>
+    <nav className="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.jpg"
+            alt="Kubb Zürich Logo"
+            width={32}
+            height={32}
+            className="h-8 w-auto object-contain rounded-[5px]"
+            priority
+          />
+          <span className="font-display font-semibold tracking-tight text-lg">Kubb Zürich</span>
+        </Link>
+
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="/" className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-brand-blue transition-colors">
+            Home
           </Link>
+          <Link href="/tournaments" className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-brand-blue transition-colors">
+            Turniere
+          </Link>
+          <Link href="/gallery" className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-brand-blue transition-colors">
+            Galerie
+          </Link>
+          <Link href="/about" className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-brand-blue transition-colors">
+            Über uns
+          </Link>
+        </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-6">
-            <NavigationMenu>
-              <NavigationMenuList>
-                {menuItems.map((item) => (
-                  <NavigationMenuItem key={item.title}>
-                    <Link
-                      href={item.url}
-                      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
-                    >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {item.title}
-                    </Link>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          {/* Profile/Auth Section */}
-          <div className="flex items-center gap-2">
-            <div className="hidden md:flex md:items-center md:gap-2">
-              {profileItems.map((item) => {
-                const Icon = item.icon;
-                if (item.onClick) {
-                  return (
-                    <Button key={item.title} variant="outline" size="sm" onClick={item.onClick}>
-                      <Icon size={16} />
-                      {item.title}
-                    </Button>
-                  );
-                }
-                return (
-                  <Button key={item.title} variant="outline" size="sm" asChild>
-                    <Link href={item.url} className="flex items-center gap-2">
-                      <Icon size={16} />
-                      {item.title}
-                    </Link>
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-full transition-all"
+            aria-label="Toggle dark mode"
+          >
+            {mounted && theme === "dark" ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+            <span className="sr-only">Toggle dark mode</span>
+          </button>
+          
+          {status === "loading" ? (
+            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+          ) : session ? (
+            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-zinc-200">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Benutzer-Menü</span>
                   </Button>
-                );
-              })}
-            </div>
-
-            {/* Mobile Menu */}
-            <div className="md:hidden">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>
-                      <Link href="/" className="flex items-center gap-2">
-                        <span className="text-lg font-semibold">Kubbz</span>
-                      </Link>
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="my-6 flex flex-col gap-6">
-                    <Accordion
-                      type="single"
-                      collapsible
-                      className="flex w-full flex-col gap-4"
-                    >
-                      {menuItems.map((item) => (
-                        <AccordionItem key={item.title} value={item.title} className="border-b-0">
-                          <AccordionTrigger className="py-0 font-semibold hover:no-underline">
-                            {item.title}
-                          </AccordionTrigger>
-                          <AccordionContent className="mt-2">
-                            <Link href={item.url} className="flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-muted hover:text-accent-foreground">
-                              <item.icon className="mr-2 h-4 w-4" />
-                              <div>
-                                <div className="text-sm font-semibold">{item.title}</div>
-                              </div>
-                            </Link>
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                    <div className="border-t pt-4">
-                      <div className="flex flex-col gap-3">
-                        {profileItems.map((item) => {
-                          const Icon = item.icon;
-                          if (item.onClick) {
-                            return (
-                              <Button key={item.title} variant="outline" onClick={item.onClick}>
-                                <Icon size={16} />
-                                {item.title}
-                              </Button>
-                            );
-                          }
-                          return (
-                            <Button key={item.title} variant="outline" asChild>
-                              <Link href={item.url} className="flex items-center gap-2">
-                                <Icon size={16} />
-                                {item.title}
-                              </Link>
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                  <div className="px-2 py-1.5">
+                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{session.user?.name || session.user?.email}</p>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400">{session.user?.email}</p>
                   </div>
-                </SheetContent>
-              </Sheet>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center text-zinc-900 dark:text-zinc-50">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Profil
+                    </Link>
+                  </DropdownMenuItem>
+                  {session.user?.role === "ADMIN" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="flex items-center text-zinc-900 dark:text-zinc-50">
+                        <Trophy className="mr-2 h-4 w-4" />
+                        Admin
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="text-red-500 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Abmelden
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-zinc-200">
+              <Link href="/login" className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-brand-blue transition-colors">
+                Log in
+              </Link>
+              <Button asChild className="bg-brand-blue text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-brand-blue/90 transition-all shadow-lg shadow-brand-blue/20">
+                <Link href="/register">Registrieren</Link>
+              </Button>
+            </div>
+          )}
+          
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-zinc-900"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
       </div>
-    </header>
+      
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md">
+          <div className="px-6 py-4 space-y-3">
+            <Link href="/" className="block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">Home</Link>
+            <Link href="/tournaments" className="block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">Turniere</Link>
+            <Link href="/gallery" className="block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">Galerie</Link>
+            <Link href="/about" className="block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">Über uns</Link>
+            {!session && (
+              <>
+                <Link href="/login" className="block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">Log in</Link>
+                <Button asChild className="w-full bg-brand-blue text-white">
+                  <Link href="/register">Registrieren</Link>
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
   );
-} 
+}

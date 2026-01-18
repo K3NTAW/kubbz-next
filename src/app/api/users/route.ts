@@ -1,14 +1,45 @@
 import { NextResponse } from "next/server";
-import { getXataClient } from "@/xata";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const xata = getXataClient();
-  const users = await xata.db.users.getAll();
-  // Optionally map to only include fields you want
-  return NextResponse.json(users.map(u => ({
-    xata_id: u.xata_id,
-    name: u.name,
-    email: u.email,
-    user_metadata: u.user_metadata,
-  })));
-} 
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
+    }
+
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        wins: true,
+        trophies: true,
+        createdAt: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Laden der Benutzer" },
+      { status: 500 }
+    );
+  }
+}
+

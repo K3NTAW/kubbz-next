@@ -1,92 +1,94 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getXataClient } from "@/xata";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function GET(req: NextRequest, { params }: any) {
-  const xata = getXataClient();
-  const awaitedParams = await params;
-  const { id: tournamentId } = awaitedParams;
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    console.log('[GET] /api/tournaments/[id]/register - tournamentId:', tournamentId);
-    const tournament = await xata.db.tournaments.read(tournamentId);
-    console.log('[GET] /api/tournaments/[id]/register - tournament:', tournament);
-    if (!tournament) {
-      return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Nicht autorisiert" },
+        { status: 401 }
+      );
     }
-    return NextResponse.json({ ...tournament, id: tournament.xata_id, tournament });
-  } catch (err) {
-    console.error('[GET] /api/tournaments/[id]/register error:', err);
-    return NextResponse.json({ error: "Fehler beim Abrufen des Turniers." }, { status: 500 });
+
+    const { id } = await params;
+    const body = await request.json();
+
+    // Check if tournament exists
+    const tournament = await prisma.tournament.findUnique({
+      where: { id },
+      include: {
+        registrations: {
+          where: {
+            status: {
+              in: ["CONFIRMED", "PENDING"],
+            },
+          },
+        },
+      },
+    });
+
+    if (!tournament) {
+      return NextResponse.json(
+        { error: "Turnier nicht gefunden" },
+        { status: 404 }
+      );
+    }
+
+    if (tournament.status !== "OPEN") {
+      return NextResponse.json(
+        { error: "Anmeldung für dieses Turnier ist nicht möglich" },
+        { status: 400 }
+      );
+    }
+
+    if (tournament.registrations.length >= tournament.maxParticipants) {
+      return NextResponse.json(
+        { error: "Turnier ist bereits voll" },
+        { status: 400 }
+      );
+    }
+
+    // Check if user is already registered
+    const existingRegistration = await prisma.registration.findUnique({
+      where: {
+        userId_tournamentId: {
+          userId: session.user.id,
+          tournamentId: id,
+        },
+      },
+    });
+
+    if (existingRegistration) {
+      return NextResponse.json(
+        { error: "Sie sind bereits für dieses Turnier registriert" },
+        { status: 400 }
+      );
+    }
+
+    // Create registration
+    const registration = await prisma.registration.create({
+      data: {
+        userId: session.user.id,
+        tournamentId: id,
+        teamName: body.teamName || null,
+        notes: body.notes || null,
+        status: "PENDING",
+      },
+    });
+
+    return NextResponse.json(registration, { status: 201 });
+  } catch (error) {
+    console.error("Error registering for tournament:", error);
+    return NextResponse.json(
+      { error: "Fehler bei der Anmeldung" },
+      { status: 500 }
+    );
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function POST(req: NextRequest, { params }: any) {
-  const xata = getXataClient();
-  const awaitedParams = await params;
-  const { id: tournamentId } = awaitedParams;
-
-  const session = await getServerSession(authOptions);
-  // console.log('[DEBUG] /api/tournaments/[id]/register POST session:', session);
-  
-  // Explicitly type session.user to include xata_id for this route
-  const user = session?.user as { name?: string | null; email?: string | null; image?: string | null; is_admin?: boolean; xata_id?: string };
-
-  if (!session || !user?.xata_id) {
-    return NextResponse.json({ error: "Nicht eingeloggt oder Benutzer-ID fehlt." }, { status: 401 });
-  }
-  const userXataId = user.xata_id; // Now this should be fine
-
-  let nameFromBody: string;
-  try {
-    const body = await req.json();
-    nameFromBody = (body.name || "").trim();
-    if (!nameFromBody) {
-      return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
-    }
-  } catch {
-    return NextResponse.json({ error: "Ungültige Anfrage-Body." }, { status: 400 });
-  }
-
-  try {
-    const tournament = await xata.db.tournaments.read(tournamentId);
-    if (!tournament) {
-      return NextResponse.json({ error: "Turnier nicht gefunden." }, { status: 404 });
-    }
-
-    if (
-      typeof tournament.max_people === "number" &&
-      typeof tournament.registered_people === "number" &&
-      tournament.registered_people >= tournament.max_people
-    ) {
-      return NextResponse.json({ error: "Das Turnier ist bereits voll." }, { status: 400 });
-    }
-
-    const alreadyRegistered = await xata.db.tournament_registrations.filter({
-      user_id: userXataId, // Filter by the user_id column
-      tournament_id: tournamentId,
-    }).getFirst();
-
-    if (alreadyRegistered) {
-      return NextResponse.json({ error: "Du bist bereits für dieses Turnier registriert." }, { status: 400 });
-    }
-
-    await xata.db.tournament_registrations.create({
-      user_id: userXataId, // Store user's xata_id in the user_id column
-      tournament_id: tournamentId,
-      name: nameFromBody, // Name of the person registering (from request body)
-      // Xata will auto-generate the primary key (xata_id for this table)
-    });
-
-    await xata.db.tournaments.update(tournamentId, {
-      registered_people: (tournament.registered_people || 0) + 1,
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error('[REGISTRATION ERROR] Details:', err);
-    return NextResponse.json({ error: "Fehler bei der Registrierung." }, { status: 500 });
-  }
-} 

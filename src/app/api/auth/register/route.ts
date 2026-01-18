@@ -1,25 +1,67 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getXataClient } from "@/xata";
-import { hash } from "bcryptjs";
-import crypto from "crypto";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
 
-export async function POST(req: NextRequest) {
-  const { email, password, name } = await req.json();
-  if (!email || !password) {
-    return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
+const registerSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const validatedData = registerSchema.parse(body);
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: validatedData.email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Ein Benutzer mit dieser E-Mail existiert bereits" },
+        { status: 400 }
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        name: validatedData.name,
+        email: validatedData.email,
+        password: hashedPassword,
+        role: "USER",
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Benutzer erfolgreich erstellt", user },
+      { status: 201 }
+    );
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Ungültige Eingabedaten", details: error.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error("Registration error:", error);
+    return NextResponse.json(
+      { error: "Ein Fehler ist aufgetreten" },
+      { status: 500 }
+    );
   }
-  const normalizedEmail = email.toLowerCase();
-  const xata = getXataClient();
-  const existing = await xata.db.users.filter({ email: normalizedEmail }).getFirst();
-  if (existing) {
-    return NextResponse.json({ error: "User already exists." }, { status: 400 });
-  }
-  const hashed = await hash(password, 10);
-  const user = await xata.db.users.create({
-    id: crypto.randomUUID(),
-    email: normalizedEmail,
-    password: hashed,
-    name,
-  });
-  return NextResponse.json({ user: { xata_id: user.xata_id, email: user.email, name: user.name } });
-} 
+}
+
